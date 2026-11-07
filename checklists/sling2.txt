@@ -1,0 +1,118 @@
+@size A5
+
+=== 8. Sling 2 Checklist
+# 1. Before Start
+Pre-Flight | Completed
+MR & Running Sheet | Completed
+Start Position | Suitable
+Taxi Brief | Completed
+Passenger Brief if req. | Completed
+Harnesses | Secure
+Park Brake | Reset ON
+Fuel | Emptiest/Qty
+Switches | OFF
+Master | ON
+EFIS Backup | ON
+Strobe Light | ON
+Circuit Breakers | Check
+CHRG Light | ON
+# 2. Engine Start
+Electric Fuel Pump | On/Test
+Ignition | Both ON
+Choke (Cold Engine) | ON
+Throttle | Set closed if cold, cracked ¼" if hot
+!! CLEAR PROP!
+Starter | Engage
+Oil Pressure | Check
+Choke | Slowly OFF
+RPM | 2000
+Electric Fuel Pump | OFF
+EFIS | ON
+Avionics and G5 | ON
+CHRG Light | OFF
+NAV Light | ON
+Flaps | UP
+---
+# 3. After Start Checks
+ATIS | Checked
+Altimeter | Set Baro (QNH), check tolerance (±100ft)
+Transponder | STBY
+Radio | Check
+Brakes | Check on taxi
+Instruments | Check on taxi
+#! Radio
+AF CTAF (AFRU) | 118.10
+AF ATIS | 120.90
+AF AWIS (1 sec mic) | 128.40
+AF Ground | 119.90
+AF Tower (North) | 123.60
+AF Tower (South) | 118.10
+BN Centre | 125.70
+Heck Field | 119.00
+#! Transponder
+Class D | 3000 + ALT
+Class G | 1200 + ALT
+
+===
+# 4. Run Ups
+>! Parked into Wind
+Park Brake | ON
+Oil Temp | Min 50°C
+Fuel | Fullest Tank
+RPM | 4000
+Ignition Check | Max drop 300 rpm, max diff 115 rpm
+Idle Check | Min. 1400 rpm
+RPM | 2000
+# 5. Pre Takeoff
+Controls | Full, Free, Correct
+Trim | Check & Set T/O
+Flight Instruments | Check / Set
+Ignition | Both ON
+Electric Fuel Pump | ON
+Engine Instruments | Green / Stable
+Flaps | 1st Stage Verified
+Radio | Correct Freq's
+Landing Light | As required
+Circuit Breakers | Check
+Canopy/Harnesses | Secure
+! Departure & Safety Take-off Brief
+# 6. Holding Point Checks
+~ M | Mixture
+~ C | Compass
+~ A | Altimeter
+~ S | Switches
+~ T³ | Transponder, Talk and Time
+---
+# 7. After Take-Off
+> Above 300ft AGL
+Positive Rate of Climb | Check
+Temp's & Pressures | Green/Stable
+Flaps | Retract NOT below 70
+Trim | Set
+# 8. Before Landing
+! Arrival Brief
+Brakes & Park Brake | Check & OFF
+Undercarriage | Fixed
+Mixture | Set
+Fuel | Fullest tank, sufficient
+Instruments | Check
+Switches | As Required
+Hatches/Harnesses | Secure
+# 9. After Landing
+Flaps | Retract
+Electric Fuel Pump | OFF
+Landing Light | OFF
+Transponder | Set STBY
+Trim | Set T/O
+Radio | Freq / Transmit
+# 10. Shutdown
+Park Brake | SET
+Flight Times | Recorded
+Throttle | Idle
+EFIS and EFIS BKUP | OFF
+Avionics Master | OFF
+Lights | OFF
+G5 | OFF
+Key | OUT
+Master | OFF
+Ignition | Left then Right OFF
