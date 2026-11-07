@@ -2,16 +2,22 @@
 """Build printable checklists.
 
   python3 build.py               build every checklists/*.txt into dist/*.html
-  python3 build.py --watch       rebuild whenever a checklist or lib/ file changes
+  python3 build.py --watch       rebuild on every change and serve a live preview that reloads itself
+  python3 build.py --watch --open   same, and open the preview in your browser
   python3 build.py new "Name"    start a new checklist from the starter template
 
 Each output file is standalone (CSS and JS inlined), so it can be emailed or opened anywhere.
 """
+import functools
 import html
+import http.server
+import json
 import re
 import sys
+import threading
 import time
 import tomllib
+import webbrowser
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -29,6 +35,24 @@ SIZES = {  # name -> (width, height, @page size)
     "Letter-landscape": ("11in", "8.5in", "letter landscape"),
 }
 DEFAULTS = {"size": "A5", "font": "8.5", "columns": "2", "binding": "on"}
+
+# Live preview: when a page is served by `--watch`, it polls /__build and reloads after each
+# rebuild, or shows the build error in a banner. Opened as a file, it does nothing.
+STATE = {"id": "", "error": None}
+RELOAD_JS = """<script>
+if (location.protocol.startsWith('http')) (function poll(seen) {
+  fetch('/__build', {cache: 'no-store'}).then(r => r.json()).then(s => {
+    let bar = document.getElementById('build-error');
+    if (s.error) {
+      if (!bar) { bar = document.createElement('pre'); bar.id = 'build-error'; document.body.prepend(bar);
+        bar.style.cssText = 'position:sticky;top:0;z-index:9;margin:0;padding:10px 16px;background:#b00020;color:#fff;font:14px monospace;white-space:pre-wrap'; }
+      bar.textContent = 'Build error: ' + s.error;
+    } else if (bar) bar.remove();
+    if (seen && s.id !== seen) return location.reload();
+    setTimeout(() => poll(s.id), 400);
+  }).catch(() => setTimeout(() => poll(seen), 2000));
+})();
+</script>"""
 
 STARTER = """\
 // Settings (optional): @size A5 | A4 | Letter (add -landscape), @font 8.5, @columns 2, @binding on|off
@@ -102,6 +126,7 @@ def build_one(path, css, js):
 <script>
 {js}
 </script>
+{RELOAD_JS}
 </body>
 </html>
 """
@@ -165,9 +190,46 @@ def build_all():
   <ul>
 {items}
   </ul>
+{RELOAD_JS}
 </body>
 </html>
 """, encoding="utf-8")
+    STATE.update(id=str(time.time()), error=None)
+
+
+class PreviewHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/__build":
+            body = json.dumps(STATE).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        else:
+            super().do_GET()
+
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-store")
+        super().end_headers()
+
+    def log_message(self, *args):
+        pass
+
+
+def serve():
+    """Serve dist/ on the first free port from 8000; return the URL."""
+    handler = functools.partial(PreviewHandler, directory=str(DIST))
+    for port in range(8000, 8020):
+        try:
+            server = http.server.ThreadingHTTPServer(("127.0.0.1", port), handler)
+            break
+        except OSError:
+            continue
+    else:
+        raise SystemExit("No free port between 8000 and 8019 for the preview server")
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    return f"http://localhost:{port}/"
 
 
 def snapshot():
@@ -191,7 +253,11 @@ def main(argv):
         return
     build_all()
     if "--watch" in argv:
+        url = serve()
+        print(f"Live preview: {url}  (pages reload after each rebuild)")
         print("Watching for changes (Ctrl+C to stop)…")
+        if "--open" in argv:
+            webbrowser.open(url)
         last = snapshot()
         try:
             while True:
@@ -202,8 +268,9 @@ def main(argv):
                     print(time.strftime("%H:%M:%S"), "rebuilding")
                     try:
                         build_all()
-                    except SystemExit as e:
+                    except (SystemExit, Exception) as e:
                         print("  error:", e)
+                        STATE["error"] = str(e)
         except KeyboardInterrupt:
             pass
 

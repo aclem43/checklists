@@ -1,0 +1,217 @@
+// Cessna 172RG Cutlass, VH-RQU (s/n 172RG0695)
+// Source: POH D1194R2-13PH, Section 4 Normal Procedures (30 May 1980, Revision 2)
+// PDF: https://flighttech.com.au/wp-content/uploads/2024/02/VH-RQU-C172RG-POH.pdf
+@size A5
+
+=== Cessna 172RG Preflight Checklist · VH-RQU
+# Preflight 1. Cabin
+POH | Available in airplane
+Landing Gear Lever | DOWN
+Control Wheel Lock | REMOVE
+Ignition Switch | OFF
+Avionics Power Switch | OFF
+Master Switch | ON
+>! Treat propeller as live
+Fuel Quantity Indicators | CHECK quantity
+Gear Position Light (green) | ILLUMINATED
+Avionics Cooling Fan | CHECK audibly
+Master Switch | OFF
+Fuel Selector Valve | BOTH
+Alternate Static Source | OFF
+Baggage Door | CHECK secure
+# 2. Empennage
+Rudder Gust Lock | REMOVE
+Tail Tie-Down | DISCONNECT
+Control Surfaces | CHECK free & secure
+# 3. Right Wing Trailing Edge
+Aileron | CHECK free & secure
+# 4. Right Wing
+Wing Tie-Down | DISCONNECT
+Main Wheel Tire | CHECK inflation
+Fuel Sumps (tank & selector) | DRAIN, check water/sediment/grade
+Fuel Quantity | CHECK visually
+Fuel Filler Cap | SECURE, vent clear
+> Drain fuel before first flight of day & after each refuel
+---
+# 5. Nose
+Static Source Openings | CHECK clear
+Engine Oil Level | Min 5 qt, 8 qt for extended flight
+Fuel Strainer | DRAIN ~4 sec, check closed
+Propeller and Spinner | CHECK nicks, security, oil leaks
+Landing Lights | CHECK condition
+Nose Gear Doors | CHECK secure
+Nose Strut and Tire | CHECK inflation
+Nose Tie-Down | DISCONNECT
+# 6. Left Wing
+Main Wheel Tire | CHECK inflation
+Fuel Tank Sump | DRAIN, check water/sediment/grade
+Fuel Quantity | CHECK visually
+Fuel Filler Cap | SECURE
+# 7. Left Wing Leading Edge
+Pitot Tube Cover | REMOVE, check clear
+Fuel Tank Vent | CHECK clear
+Stall Warning Vane | CHECK (master ON, horn)
+Wing Tie-Down | DISCONNECT
+# 8. Left Wing Trailing Edge
+Aileron | CHECK free & secure
+! Remove all frost, ice & snow · Night: check lights, carry torch
+
+=== Cessna 172RG Checklist · VH-RQU
+
+# Before Starting Engine
+Preflight Inspection | COMPLETE
+Seats, Belts, Harnesses | ADJUST & LOCK
+Fuel Selector Valve | BOTH
+Avionics, Autopilot, Elec. Equip. | OFF
+>! Avionics OFF for start to prevent damage
+Brakes | TEST & SET
+Cowl Flaps | OPEN
+Landing Gear Lever | DOWN
+Circuit Breakers | CHECK IN
+# Starting Engine
+Mixture | RICH
+Propeller | HIGH RPM
+Carburetor Heat | COLD
+Throttle | PUMP 1–2×, open ¼"
+> Hot engine: aux fuel pump ON during start
+!! PROPELLER AREA CLEAR!
+Master Switch | ON
+Ignition Switch | START, release when started
+Oil Pressure | CHECK
+Beacon & Nav Lights | ON as required
+Avionics Power Switch | ON
+Radios | ON
+---
+# Before Takeoff
+Parking Brake | SET
+Cabin Doors | CLOSED & LOCKED
+Flight Controls | FREE & CORRECT
+Flight Instruments | SET
+Fuel Selector Valve | BOTH
+Mixture | RICH (below 3000 ft)
+Aux Fuel Pump | ON (pressure rise), then OFF
+Elevator & Rudder Trim | TAKEOFF
+Throttle | 1800 RPM
+~ a | Magnetos: max drop 150 RPM, max diff 50 RPM
+~ b | Propeller: CYCLE high–low, return HIGH
+~ c | Carb Heat: CHECK for RPM drop
+~ d | Engine Instruments & Ammeter: CHECK
+~ e | Suction Gage: CHECK
+Throttle | 1000 RPM or less
+Radios | SET
+Autopilot (if installed) | OFF
+Strobe Lights | AS DESIRED
+Throttle Friction Lock | ADJUST
+Parking Brake | RELEASE
+
+===
+# Normal Takeoff
+Wing Flaps | 0°
+Carburetor Heat | COLD
+Power | FULL THROTTLE & 2700 RPM
+Elevator Control | LIFT NOSE WHEEL at 55 KIAS
+Climb Speed | 70–80 KIAS
+Brakes | APPLY momentarily when airborne
+Landing Gear | RETRACT in climb out
+# Short Field Takeoff
+Wing Flaps | 0°
+Carburetor Heat | COLD
+Brakes | APPLY
+Power | FULL THROTTLE & 2700 RPM
+Brakes | RELEASE
+Elevator Control | Slightly tail-low attitude
+Climb Speed | 63 KIAS until obstacles cleared
+Landing Gear | RETRACT after obstacles cleared
+# Normal Climb
+Airspeed | 85–95 KIAS
+Power | 25" Hg & 2500 RPM
+Fuel Selector Valve | BOTH
+Mixture | FULL RICH (lean above 3000 ft)
+Cowl Flaps | OPEN as required
+# Maximum Performance Climb
+Airspeed | 84 KIAS SL → 77 KIAS 10,000 ft
+Power | FULL THROTTLE & 2700 RPM
+Fuel Selector Valve | BOTH
+Mixture | FULL RICH (lean above 3000 ft)
+Cowl Flaps | FULL OPEN
+---
+# Cruise
+Power | 15–25" Hg, 2100–2700 RPM
+Elevator & Rudder Trim | ADJUST
+Mixture | LEAN
+Cowl Flaps | CLOSED
+# Descent
+Fuel Selector Valve | BOTH
+Power | AS DESIRED
+Carburetor Heat | FULL HEAT as required
+Mixture | ENRICHEN as required
+Cowl Flaps | CLOSED
+Wing Flaps | AS DESIRED
+> Flaps 0–10° below 130 KIAS, 10–30° below 100 KIAS
+> Gear may be extended below 140 KIAS to descend faster
+# Before Landing
+Seats, Belts, Harnesses | ADJUST & LOCK
+Fuel Selector Valve | BOTH
+Landing Gear | DOWN (below 140 KIAS)
+Landing Gear | CHECK main gear down, green light
+Mixture | RICH
+Carburetor Heat | ON (before closing throttle)
+Propeller | HIGH RPM
+Autopilot (if installed) | OFF
+
+===
+# Normal Landing
+Airspeed | 65–75 KIAS (flaps UP)
+Wing Flaps | AS DESIRED
+Airspeed | 60–70 KIAS (flaps DOWN)
+Trim | ADJUST
+Touchdown | MAIN WHEELS FIRST
+Landing Roll | LOWER NOSE WHEEL GENTLY
+Braking | MINIMUM REQUIRED
+# Short Field Landing
+Airspeed | 65–75 KIAS (flaps UP)
+Wing Flaps | 30° (below 100 KIAS)
+Airspeed | MAINTAIN 63 KIAS
+Trim | ADJUST
+Power | REDUCE to idle as obstacle cleared
+Touchdown | MAIN WHEELS FIRST
+Brakes | APPLY HEAVILY
+Wing Flaps | RETRACT for max braking
+#! Balked Landing
+Power | FULL THROTTLE & 2700 RPM
+Carburetor Heat | COLD
+Wing Flaps | RETRACT to 20°
+Climb Speed | 55 KIAS
+Wing Flaps | RETRACT slowly after 65 KIAS
+Cowl Flaps | OPEN
+---
+# After Landing
+Wing Flaps | UP
+Carburetor Heat | COLD
+Cowl Flaps | OPEN
+# Securing Airplane
+Parking Brake | SET
+Throttle | 1000 RPM
+Avionics & Elec. Equipment | OFF
+Mixture | IDLE CUT-OFF
+Throttle | CLOSE as RPM drops
+Ignition Switch | OFF
+Master Switch | OFF
+Control Lock | INSTALL
+#! Speeds (KIAS, 2650 lb)
+> Takeoff
+Normal Climb Out | 70–80
+Short Field, Flaps 0°, at 50 ft | 63
+> Enroute Climb, Flaps & Gear Up
+Normal | 85–95
+Best Rate (Vy) SL / 10,000 ft | 84 / 77
+Best Angle (Vx) SL / 10,000 ft | 67 / 68
+> Landing Approach
+Normal, Flaps Up | 65–75
+Normal, Flaps 30° | 60–70
+Short Field, Flaps 30° | 63
+> Balked Landing
+Max Power, Flaps 20° | 55
+> Turbulent Air Penetration
+2650 / 2250 / 1850 lb | 106 / 98 / 89
+Max Demo Crosswind | 15 kt

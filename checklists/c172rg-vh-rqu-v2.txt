@@ -1,0 +1,150 @@
+// Cessna 172RG, VH-RQU — version 2
+// Based on the school's laminated "Normal Check List C172RG" card (2 sides, A4, 2 columns each).
+// Lines marked "corrected" differ from the card to match POH Section 2 limitations / Section 4.
+@size A5
+
+=== C172RG 2 Normal Checklist · VH-RQU
+
+# Before Starting Engine
+Preflight Inspection | COMPLETE
+Seats, Seat Belts, Shoulder Harnesses | ADJUST & LOCK
+Fuel Selector Valve | BOTH
+Avionics Power Switch | OFF
+Electrical Equipment | OFF
+Autopilot | OFF
+Brakes | TEST & SET
+Cowl Flaps | OPEN
+Landing Gear Lever | DOWN
+Circuit Breakers | CHECK IN
+# Engine Starting
+Mixture | RICH
+Propeller | HIGH RPM
+Carburetor Heat | COLD
+Prime | 2–3 PUMPS
+Throttle | OPEN ¼"
+Master Switch | ON
+Beacon Light | ON
+!! Clear Prop!
+Ignition Switch | START
+Oil Pressure | CHECK
+Avionics Power Switch | ON
+Radios | ON
+---
+# Run-ups
+Parking Brake | OFF
+Cabin Doors | CLOSED & LOCKED
+Flight Controls | FREE & CORRECT
+Flight Instruments | SET
+Elevator and Rudder Trim | TAKEOFF
+Fuel Selector Valve | BOTH
+Auxiliary Fuel Pump | ON (check fuel pressure rise), then OFF
+Mixture | RICH (below 3000 ft)
+Throttle | 1700 RPM
+L & R Magnetos Drop | 150 MAX, 50 MAX DIFF
+Propeller | CYCLE ×3 (RPM, MAN, OIL Px)
+Carburetor Heat | CHECK (for RPM drop)
+Engine Inst. & Ammeter | CHECK
+Suction Gage | CHECK
+Throttle | 1000 RPM or less
+Radios | SET
+Autopilot | OFF
+Strobe Lights | AS DESIRED
+Throttle Friction Lock | ADJUST
+Parking Brake | OFF
+# Normal Takeoff
+Flaps | 0°
+Carburetor Heat | COLD
+Power | FULL THROTTLE & 2700 RPM
+Elevator Control | LIFT NOSE WHEEL at 55 KIAS
+Climb Speed | 70–80 KIAS
+Brakes | APPLY momentarily after takeoff
+Landing Gear | RETRACT and climb out
+Landing Light | ON
+# Short Field Takeoff
+Flaps | 0°
+Carburetor Heat | COLD
+Brakes | APPLY
+Power | FULL THROTTLE & 2700 RPM
+Brakes | RELEASE
+Elevator | MAINTAIN SLIGHTLY TAIL LOW ATTITUDE
+// corrected: card says "63 KIAS after all obstacles are cleared"; POH 4-9 says until cleared
+Climb Speed | 63 KIAS until all obstacles cleared
+Brakes | APPLY momentarily after takeoff
+Landing Gear | RETRACT after all obstacles cleared
+Landing Light | ON
+# Enroute Climb
+Landing Gear | UP & LOCK
+Flaps | RETRACT
+# Climb
+Climb Power | SET
+Fuel Selector Valve | BOTH
+Mixture | ADJUST FOR DA
+Cowl Flaps | OPEN AS NEEDED
+Landing Light | OFF
+Trim | ADJUST
+# Cruise
+Power | NO MORE THAN 75%
+Trim | ADJUST
+Mixture | LEAN
+Cowl Flaps | CLOSE
+# Descent
+Fuel Selector Valve | BOTH
+Cowl Flaps | CLOSE
+Carburetor Heat | AS NEEDED
+Mixture | ADJUST FOR DA
+# Approach
+Seats, Belts | ADJUST AND LOCK
+Magnetos | BOTH
+Mixture | SET FOR DA
+Fuel Selector Valve | BOTH
+Cowl Flaps | CLOSE
+Carburetor Heat | AS NEEDED
+Autopilot | OFF
+Landing Gear | DOWN & LOCK (below 140 KIAS)
+// corrected: card says "10° (140 IAS)"; VFE 10° is 130 KIAS (POH 2-4 and card's own V-speed table)
+Flaps | 10° (below 130 KIAS)
+---
+# Before Landing
+Propeller | FULL FINE
+// corrected: card says "40° (95 KIAS)"; 172RG flaps max 30°, VFE 10–30° is 100 KIAS (POH 2-4)
+Flaps | 30° (below 100 KIAS)
+Carburetor Heat | ON
+Landing Gear Light | GREEN
+Landing Light | ON
+#! Go Around
+Throttle / RPM | FULL / 2700 RPM
+Carburetor Heat | OFF
+Flaps | 20°
+Flaps | 0° (after 65 KIAS)
+Cowl Flaps | OPEN
+Gear | UP
+# After Landing
+Flaps | UP
+Carburetor Heat | OFF
+Cowl Flaps | OPEN
+Transponder | OFF
+Unnecessary Avionics | OFF
+Strobe Light | OFF
+Landing Light | OFF
+# Engine Shut Down
+Parking Brake | OFF
+Throttle | 1000 RPM
+Mixture | CUT-OFF
+Ignition Switch | OFF
+Avionics Power Switch | OFF
+Master Switch | OFF
+Control Wheel Lock | INSTALL
+Fuel Selector Valve | RIGHT
+#! V Speeds (KIAS)
+Va  Manoeuvring 1202 / 1020 / 839 kg | 106 / 98 / 89
+Vfe  Max flap extension 10° | 130
+Vfe  Max flap extension 10°–30° | 100
+Vle  Max gear extended | 164
+Vlo  Max gear operating | 140
+Vno  Normal operating range | 50–145
+Vne  Never exceed | 164
+Vs  Stall, no flap | 50
+Vs0  Stall, full flap | 42
+Vx  Best angle of climb | 67
+Vy  Best rate of climb | 84
+Vg  Max glide | 61–73

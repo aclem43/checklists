@@ -1,0 +1,35 @@
+{
+  // Run from the Run and Debug panel (Ctrl+Shift+D) or press F5 to run the selected one.
+  // "node-terminal" just runs the command in VS Code's terminal — no extensions needed.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Build & watch checklists",
+      "type": "node-terminal",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "command": "python3 build.py --watch --open"
+    },
+    {
+      "name": "Build checklists & open in browser",
+      "type": "node-terminal",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "command": "python3 build.py && xdg-open dist/index.html"
+    },
+    {
+      "name": "New checklist…",
+      "type": "node-terminal",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "command": "python3 build.py new \"${input:checklistName}\""
+    }
+  ],
+  "inputs": [
+    {
+      "id": "checklistName",
+      "type": "promptString",
+      "description": "Checklist name (e.g. Cessna 172)"
+    }
+  ]
+}
