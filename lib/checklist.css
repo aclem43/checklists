@@ -1,27 +1,20 @@
+/* Colours come from colours.toml (injected by build.py as --c-* variables). */
 :root {
-  --navy: #2f3b8f;
-  --red: #e4452f;
-  --yellow: #fbf4a6;
-  --ink: #222;
-  --action: #1f3c9e;
-  --rule: #4a4a4a;
-  --desk: #e6e6ea;
-  --paper: #ffffff;
   /* page size — overridden per checklist by @size */
   --pw: 148mm;
   --ph: 210mm;
   color-scheme: light dark;
 }
-@media (prefers-color-scheme: dark) {
-  :root { --desk: #1d1d22; }
-}
 * { box-sizing: border-box; }
 html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 body {
   margin: 0;
-  background: var(--desk);
+  background: var(--c-background);
   font-family: Calibri, "Segoe UI", Carlito, Arial, sans-serif;
-  color: var(--ink);
+  color: var(--c-item);
+}
+@media (prefers-color-scheme: dark) {
+  body { background: var(--c-background-dark); }
 }
 
 .toolbar {
@@ -32,13 +25,13 @@ body {
 .toolbar a { color: inherit; }
 .toolbar button {
   font: inherit; padding: 6px 14px; border-radius: 6px; cursor: pointer;
-  border: 1px solid var(--navy); background: var(--navy); color: #fff;
+  border: 1px solid var(--c-header); background: var(--c-header); color: var(--c-header-text);
 }
 
 /* One sheet; wider inside margin for spiral binding, mirrored on back pages */
 .page {
   width: var(--pw); height: var(--ph); margin: 8mm auto;
-  background: var(--paper); color: var(--ink);
+  background: var(--c-paper); color: var(--c-item);
   padding: 8mm 8mm 8mm 15mm;
   box-shadow: 0 2px 10px rgba(0,0,0,.25);
   display: flex; flex-direction: column; overflow: hidden;
@@ -48,7 +41,7 @@ body {
 .no-bind .page, .no-bind .page.back { padding: 8mm; }
 
 .title {
-  background: var(--red); color: #fff; text-align: center;
+  background: var(--c-title); color: var(--c-title-text); text-align: center;
   font-weight: 700; font-size: 1.5em; padding: .15em 0; flex: none;
 }
 .cols {
@@ -58,28 +51,28 @@ body {
 .col { min-width: 0; }
 
 .h {
-  background: var(--navy); color: #fff; text-align: center;
+  background: var(--c-header); color: var(--c-header-text); text-align: center;
   font-weight: 700; font-size: 1.25em; padding: .25em .3em; margin-top: 1em;
 }
-.h.red { background: var(--red); }
+.h.red { background: var(--c-header-alt); }
 .col > .h:first-child { margin-top: 0; }
 
 .row {
   display: flex; justify-content: space-between; align-items: baseline; gap: 2mm;
-  border-bottom: .3mm solid var(--rule); padding: .3em .25em; line-height: 1.2;
+  border-bottom: .3mm solid var(--c-rule); padding: .3em .25em; line-height: 1.2;
 }
-.row .a { color: var(--action); font-weight: 700; text-align: right; }
+.row .a { color: var(--c-action); font-weight: 700; text-align: right; }
 .row.mn .i { width: 1.8em; flex: none; }
 .row.mn .a { flex: 1; text-align: center; }
 
 .note, .warn, .sub {
-  text-align: center; border-bottom: .3mm solid var(--rule);
+  text-align: center; border-bottom: .3mm solid var(--c-rule);
   padding: .3em .25em; line-height: 1.2; font-weight: 700;
 }
-.note { background: var(--yellow); color: var(--navy); }
-.warn { color: #d0021b; font-size: 1.25em; }
+.note { background: var(--c-brief); color: var(--c-brief-text); }
+.warn { color: var(--c-warning); font-size: 1.25em; }
 .sub { font-size: .95em; }
-.sub.red { color: var(--red); }
+.sub.red { color: var(--c-header-alt); }
 
 @media print {
   @page { margin: 0; }

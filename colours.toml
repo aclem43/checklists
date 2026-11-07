@@ -1,0 +1,18 @@
+# Colours for every checklist. Edit, then run `python3 build.py`.
+# Values are any CSS colour: "#2f3b8f", "rgb(47 59 143)", "navy", …
+
+[colours]
+title           = "#e4452f"  # page title bar (=== Title)
+title-text      = "#ffffff"
+header          = "#2f3b8f"  # section headers (# Text)
+header-alt      = "#e4452f"  # red section headers (#! Text) and red sub-labels (>! Text)
+header-text     = "#ffffff"
+item            = "#222222"  # left-hand item text, sub-labels
+action          = "#1f3c9e"  # right-hand action text
+brief           = "#fbf4a6"  # brief bar background (! Text)
+brief-text      = "#2f3b8f"
+warning         = "#d0021b"  # big warning text (!! Text)
+rule            = "#4a4a4a"  # row divider lines
+paper           = "#ffffff"  # the sheet itself
+background      = "#e6e6ea"  # screen behind the sheets (not printed)
+background-dark = "#1d1d22"  # same, when the system is in dark mode

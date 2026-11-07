@@ -4,6 +4,7 @@ Plain-text checklists that build into printable HTML pages. Uses only Python 3, 
 
 ```
 checklists/   your checklists, one .txt file each   ← edit these
+colours.toml  colour settings for every checklist
 lib/          shared stylesheet and renderer (the look and layout)
 dist/         generated HTML; open in a browser and print (don't edit)
 build.py      the build script
@@ -47,4 +48,8 @@ Optional lines at the top of a checklist file:
 | `@columns` | columns per page                                          | `2`     |
 | `@binding` | `on` (wider inside margin, mirrored) / `off`              | `on`    |
 
-To change colours or fonts for every checklist, edit the variables at the top of `lib/checklist.css`.
+## Colours
+
+All colours are in `colours.toml`, and each one has a comment saying where it's used. Edit a value, then rebuild (or leave `--watch` running). The build stops if a colour the stylesheet needs is missing, and warns about entries nothing uses.
+
+To change the font, edit `lib/checklist.css`.

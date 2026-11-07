@@ -11,12 +11,14 @@ import html
 import re
 import sys
 import time
+import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "checklists"
 LIB = ROOT / "lib"
 DIST = ROOT / "dist"
+COLOURS = ROOT / "colours.toml"
 
 SIZES = {  # name -> (width, height, @page size)
     "A5": ("148mm", "210mm", "A5"),
@@ -108,9 +110,28 @@ def build_one(path, css, js):
     return dest, title
 
 
+def colour_vars(css):
+    """Turn colours.toml into a :root block of --c-* variables, checked against what the CSS uses."""
+    try:
+        colours = tomllib.loads(COLOURS.read_text(encoding="utf-8")).get("colours", {})
+    except (OSError, tomllib.TOMLDecodeError) as e:
+        raise SystemExit(f"colours.toml: {e}")
+    used = set(re.findall(r"var\(--c-([\w-]+)\)", css))
+    missing = sorted(used - colours.keys())
+    if missing:
+        raise SystemExit(f"colours.toml: missing {', '.join(missing)}")
+    for key in sorted(colours.keys() - used):
+        print(f"  warning: colours.toml: '{key}' isn't used by lib/checklist.css")
+    for key, value in colours.items():
+        if not isinstance(value, str) or re.search(r"[;{}<>]", value):
+            raise SystemExit(f"colours.toml: {key} = {value!r} isn't a valid colour")
+    return ":root {\n" + "".join(f"  --c-{k}: {v};\n" for k, v in colours.items()) + "}"
+
+
 def build_all():
     DIST.mkdir(exist_ok=True)
     css = (LIB / "checklist.css").read_text(encoding="utf-8")
+    css = colour_vars(css) + "\n" + css
     js = (LIB / "checklist.js").read_text(encoding="utf-8")
     built = []
     for path in sorted(SRC.glob("*.txt")):
@@ -150,8 +171,8 @@ def build_all():
 
 
 def snapshot():
-    files = list(SRC.glob("*.txt")) + list(LIB.glob("*"))
-    return {p: p.stat().st_mtime for p in files}
+    files = list(SRC.glob("*.txt")) + list(LIB.glob("*")) + [COLOURS]
+    return {p: p.stat().st_mtime for p in files if p.exists()}
 
 
 def main(argv):
