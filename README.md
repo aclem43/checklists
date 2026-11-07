@@ -13,12 +13,23 @@ build.py      the build script
 ## Usage
 
 ```sh
-python3 build.py                    # build everything into dist/
-python3 build.py --watch            # rebuild on save; refresh the browser to see changes
+python3 build.py edit               # open the editor in your browser
+python3 build.py --watch --open     # rebuild on save; open pages reload themselves
+python3 build.py                    # build everything into dist/ once
 python3 build.py new "Cessna 172"   # create checklists/cessna-172.txt from a starter
 ```
 
-Open `dist/index.html`, pick a checklist, and click **Print / save as PDF**. Print at 100% scale with no margins; the page size is set for you. Each file in `dist/` is standalone, so you can send it to someone on its own.
+**Editor** (`python3 build.py edit`, at `http://localhost:8000/__editor`): the text is on the left and a live preview of the printed pages is on the right.
+- Click a row in the preview to jump to its line.
+- Ctrl+S saves.
+- **Syntax** shows the cheat-sheet; click an entry to insert it.
+- **Print / PDF** prints what's in the editor, including unsaved changes.
+
+Saving rebuilds `dist/`. If you edit the same file in VS Code instead, the editor picks up the change as long as it has no unsaved edits of its own.
+
+**Printing:** open a page from `dist/` and click **Print / save as PDF**. Print at 100% scale with no margins; the page size is set for you. Each file in `dist/` is standalone, so you can send it to someone on its own.
+
+On screen, a page whose text had to shrink shows a small note, and a page that overflows even at 6pt gets a red outline. Neither is printed.
 
 ## Syntax
 
@@ -47,6 +58,13 @@ Optional lines at the top of a checklist file:
 | `@font`    | starting font size in pt                                  | `8.5`   |
 | `@columns` | columns per page                                          | `2`     |
 | `@binding` | `on` (wider inside margin, mirrored) / `off`              | `on`    |
+| `@footer`  | footer text on every page (see below)                     | none    |
+
+`@footer` puts the same footer on every page. Use `|` to split it into left and right parts; without `|` the text is centred. `{page}` and `{pages}` are replaced with the page number and the page count:
+
+```
+@footer Version 2 · 8 Nov 2026 | Page {page} of {pages}
+```
 
 ## Colours
 

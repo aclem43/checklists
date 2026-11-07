@@ -74,9 +74,34 @@ body {
 .sub { font-size: .95em; }
 .sub.red { color: var(--c-header-alt); }
 
+/* @footer: fixed size so it matches on every page, even when a page's text shrinks to fit */
+.footer {
+  flex: none; display: flex; justify-content: space-between; gap: 4mm;
+  margin-top: 2mm; padding-top: 1mm; border-top: .2mm solid var(--c-rule);
+  font-size: 7pt; color: var(--c-footer);
+}
+.footer .c { flex: 1; text-align: center; }
+
 @media print {
   @page { margin: 0; }
   body { background: none; }
   .toolbar { display: none; }
   .page { margin: 0; box-shadow: none; break-after: page; }
 }
+
+/* Settings errors and fit warnings — on screen only */
+.errors {
+  max-width: var(--pw); margin: 8mm auto 0; padding: 8px 12px; border-radius: 4px;
+  background: #b00020; color: #fff; font: 13px/1.5 ui-monospace, monospace;
+}
+@media screen {
+  .page { position: relative; }
+  .page[data-fit]::after {
+    content: attr(data-fit); position: absolute; top: 2mm; right: 2mm;
+    padding: 3px 7px; border-radius: 3px; font: 600 11px/1.2 system-ui, sans-serif;
+    background: #fff3cd; color: #6b4e00; box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  }
+  .page.overflow { outline: 3px solid #b00020; }
+  .page.overflow::after { background: #b00020; color: #fff; }
+}
+@media print { .errors { display: none; } }

@@ -4,6 +4,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Open checklist editor",
+      "type": "node-terminal",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "command": "python3 build.py edit"
+    },
+    {
       "name": "Build & watch checklists",
       "type": "node-terminal",
       "request": "launch",

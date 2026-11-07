@@ -30,6 +30,26 @@ Oil Pressure | CHECK
 Avionics Power Switch | ON
 Radios | ON
 ---
+# 3. After Start Checks
+ATIS | Checked
+Altimeter | Set Baro (QNH), check tolerance (±100ft)
+Transponder | STBY
+Radio | Check
+Brakes | Check on taxi
+Instruments | Check on taxi
+#! Radio
+AF CTAF (AFRU) | 118.10
+AF ATIS | 120.90
+AF AWIS (1 sec mic) | 128.40
+AF Ground | 119.90
+AF Tower (North) | 123.60
+AF Tower (South) | 118.10
+BN Centre | 125.70
+Heck Field | 119.00
+#! Transponder
+Class D | 3000 + ALT
+Class G | 1200 + ALT
+===
 # Run-ups
 Parking Brake | OFF
 Cabin Doors | CLOSED & LOCKED
@@ -51,6 +71,15 @@ Autopilot | OFF
 Strobe Lights | AS DESIRED
 Throttle Friction Lock | ADJUST
 Parking Brake | OFF
+! Departure & Safety Take-off Brief
+
+# 6. Holding Point Checks
+~ M | Mixture
+~ C | Compass
+~ A | Altimeter
+~ S | Switches
+~ T³ | Transponder, Talk and Time
+---
 # Normal Takeoff
 Flaps | 0°
 Carburetor Heat | COLD
@@ -72,26 +101,7 @@ Climb Speed | 63 KIAS until all obstacles cleared
 Brakes | APPLY momentarily after takeoff
 Landing Gear | RETRACT after all obstacles cleared
 Landing Light | ON
-# Enroute Climb
-Landing Gear | UP & LOCK
-Flaps | RETRACT
-# Climb
-Climb Power | SET
-Fuel Selector Valve | BOTH
-Mixture | ADJUST FOR DA
-Cowl Flaps | OPEN AS NEEDED
-Landing Light | OFF
-Trim | ADJUST
-# Cruise
-Power | NO MORE THAN 75%
-Trim | ADJUST
-Mixture | LEAN
-Cowl Flaps | CLOSE
-# Descent
-Fuel Selector Valve | BOTH
-Cowl Flaps | CLOSE
-Carburetor Heat | AS NEEDED
-Mixture | ADJUST FOR DA
+
 # Approach
 Seats, Belts | ADJUST AND LOCK
 Magnetos | BOTH
@@ -103,7 +113,7 @@ Autopilot | OFF
 Landing Gear | DOWN & LOCK (below 140 KIAS)
 // corrected: card says "10° (140 IAS)"; VFE 10° is 130 KIAS (POH 2-4 and card's own V-speed table)
 Flaps | 10° (below 130 KIAS)
----
+===
 # Before Landing
 Propeller | FULL FINE
 // corrected: card says "40° (95 KIAS)"; 172RG flaps max 30°, VFE 10–30° is 100 KIAS (POH 2-4)

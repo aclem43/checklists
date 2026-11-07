@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checklist Editor</title>
+<style>
+  :root {
+    --bg: #f6f6f8; --panel: #ffffff; --line: #d9d9e0; --text: #1f2330; --muted: #6b7080;
+    --accent: #2f3b8f; --accent-text: #fff; --danger: #b00020; --ok: #1b7f3b; --warn-bg: #fff3cd; --warn-text: #6b4e00;
+    --t-com: #8a8f9c; --t-set: #8b3fb5; --t-page: #c0392b; --t-h: #2f3b8f; --t-h2: #d0402a; --t-sub: #6b7080;
+    --t-warn: #d0021b; --t-note-bg: #fbf4a6; --t-note: #5a4a00; --t-bar: #b0b4c0; --t-act: #1f6fb0; --t-mark: #8b3fb5;
+    --sel-row: rgba(245, 166, 35, .9);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17181c; --panel: #1f2026; --line: #34363f; --text: #e4e6ec; --muted: #9a9fad;
+      --accent: #6c7be0; --warn-bg: #4a3b10; --warn-text: #ffe08a;
+      --t-com: #737888; --t-set: #c792ea; --t-page: #ff7b6b; --t-h: #8fa2ff; --t-h2: #ff8a70; --t-sub: #a0a5b5;
+      --t-warn: #ff6b6b; --t-note-bg: #4a4210; --t-note: #fff0a0; --t-bar: #5b5f6c; --t-act: #6cc3ff; --t-mark: #c792ea;
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex; flex-direction: column; background: var(--bg); color: var(--text);
+    font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; overflow: hidden;
+  }
+  button, select {
+    font: inherit; padding: 5px 12px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--panel); color: var(--text);
+  }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  button:disabled { opacity: .5; cursor: default; }
+
+  header {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    padding: 8px 12px; background: var(--panel); border-bottom: 1px solid var(--line);
+  }
+  header h1 { font-size: 15px; margin: 0 8px 0 0; }
+  header .spacer { flex: 1; }
+  header a { color: var(--muted); }
+  #state { color: var(--muted); min-width: 6em; }
+  #state.dirty { color: var(--warn-text); }
+  #state.err { color: var(--danger); }
+
+  main { flex: 1; display: flex; min-height: 0; }
+  #left { flex: 0 0 var(--left, 42%); display: flex; flex-direction: column; min-width: 240px; background: var(--panel); }
+  #split { flex: 0 0 6px; cursor: col-resize; background: var(--line); }
+  #split:hover, #split.drag { background: var(--accent); }
+  #right { flex: 1; min-width: 200px; position: relative; }
+  #preview { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+  /* Editor: a transparent textarea over a highlighted copy of the same text */
+  .code { flex: 1; display: flex; min-height: 0; font: 13px/20px ui-monospace, "Cascadia Mono", "DejaVu Sans Mono", monospace; tab-size: 4; }
+  #gutter {
+    margin: 0; padding: 10px 8px 10px 4px; min-width: 3.2em; text-align: right; overflow: hidden;
+    color: var(--muted); background: var(--bg); border-right: 1px solid var(--line); user-select: none;
+  }
+  #gutter .cur { color: var(--text); }
+  .area { position: relative; flex: 1; min-width: 0; }
+  #hl, #src {
+    position: absolute; inset: 0; margin: 0; padding: 10px 12px; border: 0;
+    font: inherit; white-space: pre; overflow: auto; tab-size: inherit;
+  }
+  #hl { overflow: hidden; pointer-events: none; color: var(--text); }
+  #src {
+    resize: none; outline: none; background: transparent; color: transparent;
+    caret-color: var(--text); -webkit-text-fill-color: transparent;
+  }
+  #src::selection { background: rgba(108, 123, 224, .35); -webkit-text-fill-color: transparent; }
+  .t-com { color: var(--t-com); }
+  .t-set { color: var(--t-set); }
+  .t-page { color: var(--t-page); }
+  .t-col { color: var(--t-com); }
+  .t-h { color: var(--t-h); }
+  .t-h2 { color: var(--t-h2); }
+  .t-sub { color: var(--t-sub); }
+  .t-sub2 { color: var(--t-h2); }
+  .t-warn { color: var(--t-warn); }
+  .t-note { color: var(--t-note); background: var(--t-note-bg); }
+  .t-bar { color: var(--t-bar); }
+  .t-act { color: var(--t-act); }
+  .t-mark { color: var(--t-mark); }
+
+  footer {
+    display: flex; gap: 12px; align-items: center; padding: 4px 12px; min-height: 28px;
+    border-top: 1px solid var(--line); background: var(--panel); color: var(--muted); font-size: 12.5px;
+  }
+  footer .warn { color: var(--warn-text); background: var(--warn-bg); padding: 1px 6px; border-radius: 3px; cursor: pointer; }
+  footer .error { color: #fff; background: var(--danger); padding: 1px 6px; border-radius: 3px; }
+
+  /* Syntax help */
+  #help {
+    display: none; border-top: 1px solid var(--line); max-height: 45%; overflow: auto; padding: 8px 12px;
+    background: var(--bg); font-size: 12.5px;
+  }
+  #help.open { display: block; }
+  #help table { border-collapse: collapse; width: 100%; }
+  #help td { padding: 3px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  #help td:first-child { font-family: ui-monospace, monospace; white-space: nowrap; }
+  #help tr[data-snippet] { cursor: pointer; }
+  #help tr[data-snippet]:hover { background: var(--panel); }
+  #help p { margin: 6px 0; color: var(--muted); }
+
+  @media (max-width: 700px) {
+    main { flex-direction: column; }
+    #left { flex-basis: 50%; }
+    #split { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Checklist Editor</h1>
+  <select id="file" aria-label="Checklist"></select>
+  <button id="new">New…</button>
+  <button id="save" class="primary" title="Ctrl+S">Save</button>
+  <span id="state"></span>
+  <span class="spacer"></span>
+  <button id="helpBtn" aria-expanded="false">Syntax</button>
+  <button id="print">Print / PDF</button>
+  <a href="/" title="Built pages">All checklists</a>
+</header>
+<main>
+  <section id="left">
+    <div class="code">
+      <pre id="gutter" aria-hidden="true"></pre>
+      <div class="area">
+        <pre id="hl" aria-hidden="true"></pre>
+        <textarea id="src" spellcheck="false" wrap="off" autocapitalize="off" autocomplete="off" aria-label="Checklist source"></textarea>
+      </div>
+    </div>
+    <div id="help">
+      <p>Click a line to insert it below the cursor.</p>
+      <table>
+        <tr data-snippet="=== Title"><td>=== Title</td><td>New page (title optional). Every second page is mirrored for binding</td></tr>
+        <tr data-snippet="---"><td>---</td><td>Move to the next column</td></tr>
+        <tr data-snippet="# Section"><td># Text</td><td>Section header</td></tr>
+        <tr data-snippet="#! Section"><td>#! Text</td><td>Section header, red</td></tr>
+        <tr data-snippet="Item | Action"><td>Item | Action</td><td>Normal row: item left, action right</td></tr>
+        <tr data-snippet="> Sub-label"><td>> Text</td><td>Small centred sub-label</td></tr>
+        <tr data-snippet=">! Sub-label"><td>>! Text</td><td>Small centred sub-label, red</td></tr>
+        <tr data-snippet="! Brief"><td>! Text</td><td>Yellow brief bar</td></tr>
+        <tr data-snippet="!! WARNING"><td>!! Text</td><td>Big red warning</td></tr>
+        <tr data-snippet="~ M | Mnemonic"><td>~ M | Text</td><td>Mnemonic row: letter left, text centred</td></tr>
+        <tr data-snippet="// note"><td>// comment</td><td>Ignored</td></tr>
+        <tr data-snippet="@size A5"><td>@size A5</td><td>A5, A4, Letter; add -landscape (default A5)</td></tr>
+        <tr data-snippet="@font 8.5"><td>@font 8.5</td><td>Starting text size in pt; shrinks to fit, down to 6 (default 8.5)</td></tr>
+        <tr data-snippet="@columns 2"><td>@columns 2</td><td>Columns per page (default 2)</td></tr>
+        <tr data-snippet="@footer Version 1 | Page {page} of {pages}"><td>@footer Left | Right</td><td>Footer on every page. {page} and {pages} become page numbers; without | it's centred</td></tr>
+        <tr data-snippet="@binding off"><td>@binding on|off</td><td>Wider inside margin for spiral binding (default on)</td></tr>
+      </table>
+    </div>
+    <footer id="status"></footer>
+  </section>
+  <div id="split" role="separator" aria-orientation="vertical" title="Drag to resize"></div>
+  <section id="right">
+    <iframe id="preview" src="/__preview" title="Preview"></iframe>
+  </section>
+</main>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const src = $('src'), hl = $('hl'), gutter = $('gutter'), frame = $('preview');
+  const fileSel = $('file'), state = $('state'), status = $('status');
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+  };
+  const esc = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+  let current = null;      // file name without .txt
+  let savedText = '';      // text as last loaded/saved
+  let lastRender = null;   // result of Checklist.render
+  let cursorLine = 0;
+  let previewScroll = 0;
+
+  // ---------- highlighting (mirrors the renderer's line types) ----------
+  function hlRow(s) {
+    const i = s.indexOf('|');
+    if (i < 0) return esc(s);
+    return `${esc(s.slice(0, i))}<span class="t-bar">|</span><span class="t-act">${esc(s.slice(i + 1))}</span>`;
+  }
+  function hlLine(l) {
+    const t = l.trim();
+    if (!t) return esc(l);
+    const wrap = cls => `<span class="${cls}">${esc(l)}</span>`;
+    if (t.startsWith('//')) return wrap('t-com');
+    if (/^@\w+\s/.test(t)) return wrap('t-set');
+    if (t.startsWith('===')) return wrap('t-page');
+    if (t === '---') return wrap('t-col');
+    if (t.startsWith('#!')) return wrap('t-h2');
+    if (t.startsWith('#')) return wrap('t-h');
+    if (t.startsWith('>!')) return wrap('t-sub2');
+    if (t.startsWith('>')) return wrap('t-sub');
+    if (t.startsWith('!!')) return wrap('t-warn');
+    if (t.startsWith('!')) return wrap('t-note');
+    if (t.startsWith('~')) { const k = l.indexOf('~'); return esc(l.slice(0, k)) + '<span class="t-mark">~</span>' + hlRow(l.slice(k + 1)); }
+    return hlRow(l);
+  }
+  function paint() {
+    const lines = src.value.split('\n');
+    hl.innerHTML = lines.map(hlLine).join('\n') + '\n ';
+    gutter.innerHTML = lines.map((_, n) => n + 1 === cursorLine ? `<span class="cur">${n + 1}</span>` : n + 1).join('\n') + '\n ';
+    syncScroll();
+  }
+  function syncScroll() {
+    hl.scrollTop = gutter.scrollTop = src.scrollTop;
+    hl.scrollLeft = src.scrollLeft;
+  }
+
+  // ---------- preview ----------
+  let renderTimer;
+  function scheduleRender() { clearTimeout(renderTimer); renderTimer = setTimeout(render, 120); }
+  function render() {
+    const w = frame.contentWindow;
+    if (!w || !w.Checklist) return;
+    const out = w.document.getElementById('out');
+    lastRender = w.Checklist.render(src.value, out);
+    w.scrollTo(0, previewScroll);
+    markCursorRow(false);
+    updateStatus();
+  }
+  frame.addEventListener('load', () => {
+    const w = frame.contentWindow, d = w.document;
+    const st = d.createElement('style');
+    st.textContent = `[data-line] { cursor: pointer; }
+      @media screen { .cursor-row { outline: 2px solid ${getComputedStyle(document.documentElement).getPropertyValue('--sel-row')}; outline-offset: -1px; } }
+      .toolbar { display: none; }`;
+    d.head.appendChild(st);
+    w.addEventListener('scroll', () => { previewScroll = w.scrollY; });
+    d.addEventListener('click', e => {
+      const el = e.target.closest('[data-line]');
+      if (el) gotoLine(+el.dataset.line);
+    });
+    (d.fonts ? d.fonts.ready : Promise.resolve()).then(render);
+  });
+
+  function markCursorRow(scroll) {
+    const d = frame.contentDocument;
+    if (!d) return;
+    d.querySelectorAll('.cursor-row').forEach(e => e.classList.remove('cursor-row'));
+    // the element for this line, or the nearest one above it
+    let best = null;
+    for (const el of d.querySelectorAll('[data-line]')) {
+      const n = +el.dataset.line;
+      if (n <= cursorLine && (!best || n >= +best.dataset.line)) best = el;
+    }
+    if (!best) return;
+    best.classList.add('cursor-row');
+    if (scroll) {
+      const r = best.getBoundingClientRect(), h = frame.contentWindow.innerHeight;
+      if (r.top < 0 || r.bottom > h) frame.contentWindow.scrollBy(0, r.top - h / 3);
+    }
+  }
+
+  // ---------- cursor / navigation ----------
+  function lineOf(pos) { return src.value.slice(0, pos).split('\n').length; }
+  function onCursor() {
+    const n = lineOf(src.selectionStart);
+    if (n === cursorLine) return;
+    cursorLine = n;
+    paint();
+    markCursorRow(true);
+    updateStatus();
+  }
+  function gotoLine(n) {
+    const lines = src.value.split('\n');
+    let start = 0;
+    for (let i = 0; i < n - 1 && i < lines.length; i++) start += lines[i].length + 1;
+    const end = start + (lines[n - 1] || '').length;
+    src.focus();
+    src.setSelectionRange(start, end);
+    const lh = 20, top = (n - 1) * lh;
+    if (top < src.scrollTop || top > src.scrollTop + src.clientHeight - 2 * lh) src.scrollTop = top - src.clientHeight / 3;
+    syncScroll();
+    onCursor();
+  }
+
+  // ---------- status ----------
+  function updateStatus() {
+    const parts = [`Ln ${cursorLine || 1}`];
+    if (lastRender) {
+      parts.push(`${lastRender.pages} page${lastRender.pages === 1 ? '' : 's'} · ${lastRender.settings.size}`);
+      if (lastRender.errors.length) parts.push(`<span class="error">${lastRender.errors.length} error${lastRender.errors.length > 1 ? 's' : ''}: ${esc(lastRender.errors[0])}</span>`);
+      const d = frame.contentDocument;
+      d && d.querySelectorAll('.page[data-fit]').forEach(p => {
+        const n = [...d.querySelectorAll('.page')].indexOf(p) + 1;
+        parts.push(`<span class="warn" data-page="${n}">Page ${n}: ${esc(p.dataset.fit)}</span>`);
+      });
+    }
+    status.innerHTML = parts.join(' &nbsp; ');
+  }
+  status.addEventListener('click', e => {
+    const w = e.target.closest('[data-page]');
+    if (!w) return;
+    const p = frame.contentDocument.querySelectorAll('.page')[w.dataset.page - 1];
+    p && p.scrollIntoView({ block: 'start' });
+  });
+
+  // ---------- files ----------
+  const dirty = () => current && src.value !== savedText;
+  function updateState(msg, cls) {
+    if (msg === undefined) { msg = dirty() ? '● Unsaved' : current ? 'Saved' : ''; cls = dirty() ? 'dirty' : ''; }
+    state.textContent = msg;
+    state.className = cls || '';
+    document.title = (dirty() ? '● ' : '') + (current ? current + ' — ' : '') + 'Checklist Editor';
+  }
+  async function api(path, opts) {
+    const r = await fetch(path, { cache: 'no-store', ...opts });
+    if (!r.ok) {
+      let msg = r.statusText;
+      try { msg = (await r.json()).error || msg; } catch {}
+      throw new Error(msg);
+    }
+    return r;
+  }
+  async function loadList(select) {
+    const names = await (await api('/__api/list')).json();
+    fileSel.innerHTML = names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
+    const pick = select && names.includes(select) ? select : names.includes(store.get('editor.file')) ? store.get('editor.file') : names[0];
+    if (pick) await open(pick);
+    else { current = null; src.value = ''; savedText = ''; paint(); scheduleRender(); updateState('No checklists yet: click New…'); }
+  }
+  async function open(name) {
+    const text = await (await api('/__api/file?name=' + encodeURIComponent(name))).text();
+    current = name;
+    fileSel.value = name;
+    store.set('editor.file', name);
+    src.value = savedText = text;
+    src.setSelectionRange(0, 0);
+    src.scrollTop = 0;
+    cursorLine = 1;
+    previewScroll = 0;
+    paint();
+    scheduleRender();
+    updateState();
+  }
+  async function save() {
+    if (!current || !dirty()) return;
+    const text = src.value;
+    try {
+      await api('/__api/file?name=' + encodeURIComponent(current), { method: 'PUT', body: text, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+      savedText = text;
+      updateState();
+    } catch (e) { updateState('Save failed: ' + e.message, 'err'); }
+  }
+  async function create() {
+    const title = prompt('Name for the new checklist (e.g. Cessna 172):');
+    if (!title) return;
+    const name = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    if (!name) return;
+    if (dirty() && !confirm('Discard unsaved changes to ' + current + '?')) return;
+    try {
+      const starter = await (await api('/__api/starter?name=' + encodeURIComponent(title))).text();
+      await api(`/__api/file?name=${encodeURIComponent(name)}&create`, { method: 'PUT', body: starter, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+      await loadList(name);
+    } catch (e) { updateState(e.message, 'err'); }
+  }
+
+  // Pick up edits made elsewhere (e.g. VS Code) when there are no unsaved changes here.
+  let buildId = null;
+  async function pollBuild() {
+    try {
+      const s = await (await api('/__build')).json();
+      if (buildId && s.id !== buildId && current && !dirty()) {
+        const text = await (await api('/__api/file?name=' + encodeURIComponent(current))).text();
+        if (text !== src.value) {
+          const pos = src.selectionStart, top = src.scrollTop;
+          src.value = savedText = text;
+          src.setSelectionRange(Math.min(pos, text.length), Math.min(pos, text.length));
+          src.scrollTop = top;
+          paint(); scheduleRender(); updateState('Reloaded from disk');
+        }
+      }
+      buildId = s.id;
+    } catch {}
+    setTimeout(pollBuild, 1000);
+  }
+
+  // ---------- wiring ----------
+  src.addEventListener('input', () => { paint(); scheduleRender(); updateState(); onCursor(); });
+  src.addEventListener('scroll', syncScroll);
+  ['keyup', 'click', 'select'].forEach(ev => src.addEventListener(ev, onCursor));
+  fileSel.addEventListener('change', () => {
+    if (dirty() && !confirm('Discard unsaved changes to ' + current + '?')) { fileSel.value = current; return; }
+    open(fileSel.value);
+  });
+  $('save').addEventListener('click', save);
+  $('new').addEventListener('click', create);
+  $('print').addEventListener('click', () => frame.contentWindow.print());
+  $('helpBtn').addEventListener('click', e => {
+    const open = $('help').classList.toggle('open');
+    e.currentTarget.setAttribute('aria-expanded', open);
+  });
+  $('help').addEventListener('click', e => {
+    const row = e.target.closest('[data-snippet]');
+    if (!row) return;
+    // Insert as a new line after the cursor's line (keeps undo history)
+    src.focus();
+    const v = src.value, lineEnd = v.indexOf('\n', src.selectionStart);
+    const at = lineEnd < 0 ? v.length : lineEnd;
+    src.setSelectionRange(at, at);
+    document.execCommand('insertText', false, '\n' + row.dataset.snippet);
+  });
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); }
+  });
+  window.addEventListener('beforeunload', e => { if (dirty()) { e.preventDefault(); e.returnValue = ''; } });
+
+  // Resizable split
+  const split = $('split'), left = $('left');
+  const savedW = store.get('editor.left');
+  if (savedW) left.style.setProperty('--left', savedW);
+  split.addEventListener('pointerdown', e => {
+    split.setPointerCapture(e.pointerId);
+    split.classList.add('drag');
+    frame.style.pointerEvents = 'none';
+  });
+  split.addEventListener('pointermove', e => {
+    if (!split.classList.contains('drag')) return;
+    left.style.setProperty('--left', Math.max(240, Math.min(e.clientX, innerWidth - 200)) + 'px');
+  });
+  split.addEventListener('pointerup', () => {
+    split.classList.remove('drag');
+    frame.style.pointerEvents = '';
+    store.set('editor.left', left.style.getPropertyValue('--left'));
+    render();
+  });
+
+  loadList().catch(e => updateState('Could not load checklists: ' + e.message, 'err'));
+  pollBuild();
+})();
+</script>
+</body>
+</html>

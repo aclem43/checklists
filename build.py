@@ -2,11 +2,13 @@
 """Build printable checklists.
 
   python3 build.py               build every checklists/*.txt into dist/*.html
+  python3 build.py edit          open the editor in your browser (also rebuilds dist/ on every save)
   python3 build.py --watch       rebuild on every change and serve a live preview that reloads itself
   python3 build.py --watch --open   same, and open the preview in your browser
   python3 build.py new "Name"    start a new checklist from the starter template
 
 Each output file is standalone (CSS and JS inlined), so it can be emailed or opened anywhere.
+Settings (@size etc.) and layout are handled by lib/checklist.js, shared by the built pages and the editor.
 """
 import functools
 import html
@@ -19,22 +21,14 @@ import time
 import tomllib
 import webbrowser
 from pathlib import Path
+from urllib.parse import parse_qs, urlsplit
 
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "checklists"
 LIB = ROOT / "lib"
 DIST = ROOT / "dist"
 COLOURS = ROOT / "colours.toml"
-
-SIZES = {  # name -> (width, height, @page size)
-    "A5": ("148mm", "210mm", "A5"),
-    "A5-landscape": ("210mm", "148mm", "A5 landscape"),
-    "A4": ("210mm", "297mm", "A4"),
-    "A4-landscape": ("297mm", "210mm", "A4 landscape"),
-    "Letter": ("8.5in", "11in", "letter"),
-    "Letter-landscape": ("11in", "8.5in", "letter landscape"),
-}
-DEFAULTS = {"size": "A5", "font": "8.5", "columns": "2", "binding": "on"}
+NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")  # checklist file names (without .txt)
 
 # Live preview: when a page is served by `--watch`, it polls /__build and reloads after each
 # rebuild, or shows the build error in a banner. Opened as a file, it does nothing.
@@ -55,8 +49,10 @@ if (location.protocol.startsWith('http')) (function poll(seen) {
 </script>"""
 
 STARTER = """\
-// Settings (optional): @size A5 | A4 | Letter (add -landscape), @font 8.5, @columns 2, @binding on|off
+// Settings (optional): @size A5 | A4 | Letter (add -landscape), @font 8.5, @columns 2, @binding on|off,
+// @footer Left text | Right text   ({{page}} and {{pages}} become page numbers)
 @size A5
+@footer Version 1 | Page {{page}} of {{pages}}
 
 === {name} Checklist
 # 1. Before Start
@@ -72,21 +68,8 @@ Item | Action
 """
 
 
-def parse(path):
-    """Split @directives off the top of the source; return (settings, body)."""
-    settings, body = dict(DEFAULTS), []
-    for line in path.read_text(encoding="utf-8").splitlines():
-        m = re.match(r"\s*@(\w+)\s+(.+?)\s*$", line)
-        if m:
-            key = m.group(1).lower()
-            if key not in DEFAULTS:
-                raise SystemExit(f"{path.name}: unknown setting @{key} (known: {', '.join(DEFAULTS)})")
-            settings[key] = m.group(2)
-        else:
-            body.append(line)
-    if settings["size"] not in SIZES:
-        raise SystemExit(f"{path.name}: unknown @size {settings['size']} (known: {', '.join(SIZES)})")
-    return settings, "\n".join(body)
+def slugify(name):
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 
 
 def title_of(path, body):
@@ -94,32 +77,31 @@ def title_of(path, body):
     return m.group(1) if m else path.stem.replace("-", " ").title()
 
 
-def build_one(path, css, js):
-    settings, body = parse(path)
-    w, h, page = SIZES[settings["size"]]
-    title = title_of(path, body)
+def assets():
+    """Return (css, js): the stylesheet with colours.toml variables prepended, and the renderer."""
+    css = (LIB / "checklist.css").read_text(encoding="utf-8")
+    css = colour_vars(css) + "\n" + css
+    js = (LIB / "checklist.js").read_text(encoding="utf-8")
+    return css, js
+
+
+def page_html(title, css, js, toolbar, body="", note=""):
     # The source lives inside a <script> tag; only "</script" could break out of it.
     body = re.sub(r"</(script)", r"<\\/\1", body, flags=re.I)
-    bind = "" if settings["binding"].lower() in ("on", "yes", "true") else ' class="no-bind"'
-    out = f"""<!DOCTYPE html>
-<html lang="en"{bind}>
+    return f"""<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)}</title>
 <style>
 {css}
-:root {{ --pw: {w}; --ph: {h}; --cols: {int(settings["columns"])}; }}
-@media print {{ @page {{ size: {page}; }} }}
 </style>
 </head>
 <body>
-<div class="toolbar">
-  <a href="index.html">&larr; All checklists</a>
-  <button onclick="window.print()">Print / save as PDF</button>
-</div>
-<main id="out" data-font="{float(settings["font"])}"></main>
-<!-- Generated from checklists/{path.name} by build.py — edit that file, not this one. -->
+{toolbar}
+<main id="out"></main>
+{note}
 <script type="text/plain" id="checklist">
 {body}
 </script>
@@ -130,8 +112,18 @@ def build_one(path, css, js):
 </body>
 </html>
 """
+
+
+def build_one(path, css, js):
+    body = path.read_text(encoding="utf-8")
+    title = title_of(path, body)
+    toolbar = """<div class="toolbar">
+  <a href="index.html">&larr; All checklists</a>
+  <button onclick="window.print()">Print / save as PDF</button>
+</div>"""
+    note = f"<!-- Generated from checklists/{path.name} by build.py — edit that file, not this one. -->"
     dest = DIST / f"{path.stem}.html"
-    dest.write_text(out, encoding="utf-8")
+    dest.write_text(page_html(title, css, js, toolbar, body, note), encoding="utf-8")
     return dest, title
 
 
@@ -155,9 +147,7 @@ def colour_vars(css):
 
 def build_all():
     DIST.mkdir(exist_ok=True)
-    css = (LIB / "checklist.css").read_text(encoding="utf-8")
-    css = colour_vars(css) + "\n" + css
-    js = (LIB / "checklist.js").read_text(encoding="utf-8")
+    css, js = assets()
     built = []
     for path in sorted(SRC.glob("*.txt")):
         dest, title = build_one(path, css, js)
@@ -183,6 +173,7 @@ def build_all():
   body {{ font-family: Calibri, "Segoe UI", Carlito, Arial, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 16px; line-height: 1.6; }}
   h1 {{ color: #e4452f; }}
   a {{ font-size: 1.15rem; }}
+  #edit {{ display: none; }}
 </style>
 </head>
 <body>
@@ -190,6 +181,8 @@ def build_all():
   <ul>
 {items}
   </ul>
+  <p id="edit"><a href="/__editor">Open the editor &rarr;</a></p>
+  <script>if (location.protocol.startsWith('http')) document.getElementById('edit').style.display = 'block';</script>
 {RELOAD_JS}
 </body>
 </html>
@@ -198,16 +191,65 @@ def build_all():
 
 
 class PreviewHandler(http.server.SimpleHTTPRequestHandler):
+    """Serves dist/, plus the editor and its small file API under /__."""
+
+    def send_body(self, body, content_type="text/html; charset=utf-8", status=200):
+        if isinstance(body, str):
+            body = body.encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def send_json(self, obj, status=200):
+        self.send_body(json.dumps(obj), "application/json", status)
+
+    def checklist_path(self, query):
+        name = parse_qs(query).get("name", [""])[0]
+        return SRC / f"{name}.txt" if NAME_RE.match(name) else None
+
     def do_GET(self):
-        if self.path == "/__build":
-            body = json.dumps(STATE).encode()
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-        else:
-            super().do_GET()
+        url = urlsplit(self.path)
+        if url.path == "/__build":
+            return self.send_json(STATE)
+        if url.path == "/__editor":
+            return self.send_body((LIB / "editor.html").read_text(encoding="utf-8"))
+        if url.path == "/__preview":
+            # Empty page shell the editor renders into, with the same CSS and renderer as dist/.
+            try:
+                css, js = assets()
+            except SystemExit as e:
+                return self.send_body(str(e), "text/plain; charset=utf-8", 500)
+            return self.send_body(page_html("Preview", css, js, ""))
+        if url.path == "/__api/list":
+            return self.send_json([p.stem for p in sorted(SRC.glob("*.txt"))])
+        if url.path == "/__api/file":
+            path = self.checklist_path(url.query)
+            if not path or not path.exists():
+                return self.send_json({"error": "not found"}, 404)
+            return self.send_body(path.read_text(encoding="utf-8"), "text/plain; charset=utf-8")
+        if url.path == "/__api/starter":
+            name = parse_qs(url.query).get("name", ["New"])[0]
+            return self.send_body(STARTER.format(name=name), "text/plain; charset=utf-8")
+        return super().do_GET()
+
+    def do_PUT(self):
+        # Only accept saves from pages served by this server (blocks other sites writing files).
+        origin = self.headers.get("Origin")
+        if origin and urlsplit(origin).netloc != self.headers.get("Host"):
+            return self.send_json({"error": "forbidden"}, 403)
+        url = urlsplit(self.path)
+        path = self.checklist_path(url.query) if url.path == "/__api/file" else None
+        if not path:
+            return self.send_json({"error": "bad name: use lowercase letters, digits and dashes"}, 400)
+        if "create" in parse_qs(url.query, keep_blank_values=True) and path.exists():
+            return self.send_json({"error": f"{path.name} already exists"}, 409)
+        length = int(self.headers.get("Content-Length", 0))
+        text = self.rfile.read(length).decode("utf-8")
+        SRC.mkdir(exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+        return self.send_json({"saved": path.name})
 
     def end_headers(self):
         self.send_header("Cache-Control", "no-store")
@@ -237,13 +279,37 @@ def snapshot():
     return {p: p.stat().st_mtime for p in files if p.exists()}
 
 
+def watch(open_path=None):
+    """Serve the preview, optionally open `open_path` in the browser, and rebuild on changes."""
+    url = serve()
+    print(f"Live preview: {url}  (pages reload after each rebuild)")
+    print(f"Editor:       {url}__editor")
+    print("Watching for changes (Ctrl+C to stop)…")
+    if open_path is not None:
+        webbrowser.open(url + open_path)
+    last = snapshot()
+    try:
+        while True:
+            time.sleep(0.5)
+            now = snapshot()
+            if now != last:
+                last = now
+                print(time.strftime("%H:%M:%S"), "rebuilding")
+                try:
+                    build_all()
+                except (SystemExit, Exception) as e:
+                    print("  error:", e)
+                    STATE["error"] = str(e)
+    except KeyboardInterrupt:
+        pass
+
+
 def main(argv):
     if argv[:1] == ["new"]:
         if len(argv) < 2:
             raise SystemExit('usage: python3 build.py new "Aircraft Name"')
         name = " ".join(argv[1:])
-        slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
-        path = SRC / f"{slug}.txt"
+        path = SRC / f"{slugify(name)}.txt"
         if path.exists():
             raise SystemExit(f"{path.relative_to(ROOT)} already exists")
         SRC.mkdir(exist_ok=True)
@@ -252,27 +318,10 @@ def main(argv):
         build_all()
         return
     build_all()
-    if "--watch" in argv:
-        url = serve()
-        print(f"Live preview: {url}  (pages reload after each rebuild)")
-        print("Watching for changes (Ctrl+C to stop)…")
-        if "--open" in argv:
-            webbrowser.open(url)
-        last = snapshot()
-        try:
-            while True:
-                time.sleep(0.5)
-                now = snapshot()
-                if now != last:
-                    last = now
-                    print(time.strftime("%H:%M:%S"), "rebuilding")
-                    try:
-                        build_all()
-                    except (SystemExit, Exception) as e:
-                        print("  error:", e)
-                        STATE["error"] = str(e)
-        except KeyboardInterrupt:
-            pass
+    if argv[:1] == ["edit"]:
+        watch(open_path="__editor")
+    elif "--watch" in argv:
+        watch(open_path="" if "--open" in argv else None)
 
 
 if __name__ == "__main__":

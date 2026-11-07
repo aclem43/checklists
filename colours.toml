@@ -13,6 +13,7 @@ brief           = "#fbf4a6"  # brief bar background (! Text)
 brief-text      = "#2f3b8f"
 warning         = "#d0021b"  # big warning text (!! Text)
 rule            = "#4a4a4a"  # row divider lines
+footer          = "#666666"  # page footer text (@footer)
 paper           = "#ffffff"  # the sheet itself
 background      = "#e6e6ea"  # screen behind the sheets (not printed)
 background-dark = "#1d1d22"  # same, when the system is in dark mode
