@@ -10,6 +10,7 @@
 Each output file is standalone (CSS and JS inlined), so it can be emailed or opened anywhere.
 Settings (@size etc.) and layout are handled by lib/checklist.js, shared by the built pages and the editor.
 """
+import base64
 import functools
 import html
 import http.server
@@ -21,7 +22,7 @@ import time
 import tomllib
 import webbrowser
 from pathlib import Path
-from urllib.parse import parse_qs, urlsplit
+from urllib.parse import parse_qs, unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "checklists"
@@ -29,6 +30,9 @@ LIB = ROOT / "lib"
 DIST = ROOT / "dist"
 COLOURS = ROOT / "colours.toml"
 NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")  # checklist file names (without .txt)
+IMG_RE = re.compile(r"^\s*\[img\s+(.+?)\s*\]\s*$", re.I | re.M)  # same as IMG_RE in lib/checklist.js
+IMAGE_TYPES = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif",
+               ".webp": "image/webp", ".svg": "image/svg+xml"}
 
 # Live preview: when a page is served by `--watch`, it polls /__build and reloads after each
 # rebuild, or shows the build error in a banner. Opened as a file, it does nothing.
@@ -64,6 +68,27 @@ def title_of(path, body):
     return m.group(1) if m else path.stem.replace("-", " ").title()
 
 
+def image_file(rel):
+    """The file an [img] path names, if it's an image inside checklists/ (paths are relative to it)."""
+    path = (SRC / rel).resolve()
+    if path.suffix.lower() in IMAGE_TYPES and path.is_relative_to(SRC.resolve()) and path.is_file():
+        return path
+    return None
+
+
+def embedded_images(body, source_name):
+    """{path: data URI} for every [img] in the checklist, so the built page works on its own."""
+    images = {}
+    for rel in dict.fromkeys(IMG_RE.findall(body)):
+        path = image_file(rel)
+        if not path:
+            print(f"  warning: {source_name}: image not found in checklists/: {rel}")
+            continue
+        data = base64.b64encode(path.read_bytes()).decode("ascii")
+        images[rel] = f"data:{IMAGE_TYPES[path.suffix.lower()]};base64,{data}"
+    return images
+
+
 def assets():
     """Return (css, js): the stylesheet with colours.toml variables prepended, and the renderer."""
     css = (LIB / "checklist.css").read_text(encoding="utf-8")
@@ -72,15 +97,17 @@ def assets():
     return css, js
 
 
-def page_html(title, css, js, toolbar, body="", note=""):
+def page_html(title, css, js, toolbar, body="", note="", images=None, image_base=""):
     # The source lives inside a <script> tag; only "</script" could break out of it.
     body = re.sub(r"</(script)", r"<\\/\1", body, flags=re.I)
+    image_json = json.dumps(images or {}).replace("</", "<\\/")
+    base_meta = f'<meta name="checklist-images" content="{html.escape(image_base)}">\n' if image_base else ""
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{html.escape(title)}</title>
+{base_meta}<title>{html.escape(title)}</title>
 <style>
 {css}
 </style>
@@ -92,6 +119,7 @@ def page_html(title, css, js, toolbar, body="", note=""):
 <script type="text/plain" id="checklist">
 {body}
 </script>
+<script type="application/json" id="checklist-images">{image_json}</script>
 <script>
 {js}
 </script>
@@ -110,7 +138,8 @@ def build_one(path, css, js):
 </div>"""
     note = f"<!-- Generated from checklists/{path.name} by build.py — edit that file, not this one. -->"
     dest = DIST / f"{path.stem}.html"
-    dest.write_text(page_html(title, css, js, toolbar, body, note), encoding="utf-8")
+    images = embedded_images(body, path.name)
+    dest.write_text(page_html(title, css, js, toolbar, body, note, images), encoding="utf-8")
     return dest, title
 
 
@@ -208,7 +237,12 @@ class PreviewHandler(http.server.SimpleHTTPRequestHandler):
                 css, js = assets()
             except SystemExit as e:
                 return self.send_body(str(e), "text/plain; charset=utf-8", 500)
-            return self.send_body(page_html("Preview", css, js, ""))
+            return self.send_body(page_html("Preview", css, js, "", image_base="/__img/"))
+        if url.path.startswith("/__img/"):
+            path = image_file(unquote(url.path[len("/__img/"):]))
+            if not path:
+                return self.send_json({"error": "not found"}, 404)
+            return self.send_body(path.read_bytes(), IMAGE_TYPES[path.suffix.lower()])
         if url.path == "/__api/list":
             return self.send_json([p.stem for p in sorted(SRC.glob("*.txt"))])
         if url.path == "/__api/file":
@@ -262,7 +296,7 @@ def serve():
 
 
 def snapshot():
-    files = list(SRC.glob("*.txt")) + list(LIB.glob("*")) + [COLOURS]
+    files = [p for p in SRC.rglob("*") if p.is_file()] + list(LIB.glob("*")) + [COLOURS]
     return {p: p.stat().st_mtime for p in files if p.exists()}
 
 

@@ -49,6 +49,20 @@ body {
   display: grid; grid-template-columns: repeat(var(--cols, 2), 1fr); column-gap: 4mm;
 }
 .col { min-width: 0; }
+.cols { grid-template-rows: minmax(0, 1fr); } /* columns are exactly the sheet's height, so images can shrink to fit */
+
+/* [img path]: fills the column width; shrinks (keeping its shape) when the column is full.
+   multiply lets a white image background take on the paper colour. */
+.col.has-img { display: flex; flex-direction: column; }
+.col.has-img > * { flex: none; }
+.col.has-img > .img {
+  display: block; width: 100%; height: auto; min-height: 0; flex: 0 1 auto;
+  object-fit: contain; mix-blend-mode: multiply; margin: 1mm 0;
+}
+.img-missing {
+  border: .5mm dashed var(--c-header-alt); color: var(--c-header-alt); font-weight: 700;
+  text-align: center; padding: 2em .5em; margin: 1mm 0;
+}
 
 .h {
   background: var(--c-header); color: var(--c-header-text); text-align: center;
@@ -73,6 +87,9 @@ body {
 }
 .tbl td:first-child { color: var(--c-item); font-weight: 400; text-align: left; }
 .tbl tr.group td { border-top: .7mm solid var(--c-header); } /* blank line between table rows */
+/* A row with a blank cell (after the first) is a write-in row: taller, with room for pencil */
+.tbl tr:has(> td:not(:first-child):empty) td { height: 2.4em; vertical-align: bottom; }
+.tbl:has(td:not(:first-child):empty) td:not(:first-child) { border-left: .2mm solid var(--c-rule); } /* worksheet: full grid */
 
 .note, .warn, .sub {
   text-align: center; border-bottom: .3mm solid var(--c-rule);

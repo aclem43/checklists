@@ -165,10 +165,11 @@
         <tr data-snippet="! Brief"><td>! Text</td><td>Yellow brief bar</td></tr>
         <tr data-snippet="!! WARNING"><td>!! Text</td><td>Big red warning</td></tr>
         <tr data-snippet="~ M | Mnemonic"><td>~ M | Text</td><td>Mnemonic row: letter left, text centred</td></tr>
+        <tr data-snippet="[img images/chart.png]"><td>[img path]</td><td>Image from the checklists folder (e.g. images/chart.png). Fills the column width and shrinks to fit; for a big chart use @columns 1 on its page</td></tr>
         <tr data-snippet="// note"><td>// comment</td><td>Ignored</td></tr>
         <tr data-snippet="@size A5"><td>@size A5</td><td>A5, A4, Letter; add -landscape (default A5)</td></tr>
         <tr data-snippet="@font 8.5"><td>@font 8.5</td><td>Starting text size in pt; shrinks to fit, down to 6 (default 8.5)</td></tr>
-        <tr data-snippet="@columns 2"><td>@columns 2</td><td>Columns per page (default 2)</td></tr>
+        <tr data-snippet="@columns 2"><td>@columns 2</td><td>Columns per page (default 2). Under a === line: that page only</td></tr>
         <tr data-snippet="@footer Version 1 | Page {page} of {pages}"><td>@footer Left | Right</td><td>Footer on every page. {page} and {pages} become page numbers; without | it's centred</td></tr>
         <tr data-snippet="@paper pink"><td>@paper colour</td><td>Sheet colour. At the top: every page. Under a === line: that page only</td></tr>
         <tr data-snippet="@binding off"><td>@binding on|off</td><td>Wider inside margin for spiral binding (default on)</td></tr>
@@ -213,6 +214,7 @@
     if (/^@\w+\s/.test(t)) return wrap('t-set');
     if (t.startsWith('===')) return wrap('t-page');
     if (t === '---') return wrap('t-col');
+    if (/^\[img\s.*\]$/i.test(t)) return wrap('t-set');
     if (t.startsWith('#!')) return wrap('t-h2');
     if (t.startsWith('#')) return wrap('t-h');
     if (t.startsWith('>!')) return wrap('t-sub2');

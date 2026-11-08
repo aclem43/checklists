@@ -69,9 +69,24 @@ On screen, a page whose text had to shrink shows a small note, and a page that o
 ~ M | Text      mnemonic row (letter on the left, text centred)
 Item | Action   normal row
 A | B | C       table row: with two or more |, consecutive rows line up in columns.
-                A blank line between table rows draws a heavier rule (e.g. to group by RPM)
+                A blank line between table rows draws a heavier rule (e.g. to group by RPM).
+                A blank cell after the first (Fuel | 48 | |) makes a taller write-in row
+[img path]      image, e.g. [img images/cg-envelope.png] (path relative to checklists/)
 // comment      ignored
 ```
+
+### Images
+
+`[img path]` puts an image (PNG, JPEG, GIF, WebP or SVG) from the `checklists/` folder on the page. It fills the column's width; if the column runs out of room, images shrink (keeping their shape) before any text does. For a big chart, give its page one column:
+
+```
+=== C172RG Weight & Balance
+@columns 1
+[img images/c172rg-loading-graph.png]
+[img images/c172rg-cg-envelope.png]
+```
+
+Built and exported pages embed the images, so each file still works on its own. A white image background takes on the page's `@paper` colour. Scans print best cropped tight, rotated upright and cleaned to black on white; about 1400 px wide is plenty for an A5 page.
 
 If a page's content doesn't fit, its text shrinks automatically, down to 6pt. If it still doesn't fit, split it with `===` or `---`.
 
@@ -83,12 +98,12 @@ Optional lines at the top of a checklist file:
 |------------|-----------------------------------------------------------|---------|
 | `@size`    | `A5`, `A4`, `Letter`, each also with `-landscape`         | `A5`    |
 | `@font`    | starting font size in pt                                  | `8.5`   |
-| `@columns` | columns per page                                          | `2`     |
+| `@columns` | columns per page (also per page, like `@paper`)           | `2`     |
 | `@binding` | `on` (wider inside margin, mirrored) / `off`              | `on`    |
 | `@footer`  | footer text on every page (see below)                     | none    |
 | `@paper`   | sheet colour: any CSS colour (`pink`, `#ffd6e0`, …)       | `paper` in `colours.toml` |
 
-`@paper` is the one setting that can apply to a single page. At the top of the file it colours every page; on a line after `===` it colours only that page:
+`@paper` and `@columns` can also apply to a single page. At the top of the file they apply to every page; on a line after `===` they apply only to that page:
 
 ```
 === Emergency Checklist

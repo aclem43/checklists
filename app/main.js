@@ -68,14 +68,14 @@ ipcMain.handle('write', (_, name, text, create) => {
 });
 ipcMain.handle('starter', (_, title) =>
   fs.readFileSync(path.join(LIB, 'starter.txt'), 'utf8').replaceAll('{name}', title));
-ipcMain.handle('preview-html', () => previewHtml(coloursFile()));
+ipcMain.handle('preview-html', () => previewHtml(coloursFile(), checklistsDir()));
 ipcMain.handle('export-html', async (_, name, text) => {
   const { canceled, filePath } = await dialog.showSaveDialog(win, {
     defaultPath: path.join(app.getPath('documents'), name + '.html'),
     filters: [{ name: 'Web page', extensions: ['html'] }],
   });
   if (canceled) return null;
-  fs.writeFileSync(filePath, standaloneHtml(name, text, coloursFile()));
+  fs.writeFileSync(filePath, standaloneHtml(name, text, coloursFile(), checklistsDir()));
   return filePath;
 });
 ipcMain.handle('export-pdf', async (_, name, text) => {
@@ -92,13 +92,15 @@ ipcMain.handle('reveal', (_, filePath) => shell.showItemInFolder(filePath));
 /** Render a checklist in a hidden window and print it to PDF at its own page size. */
 async function renderPdf(name, text) {
   const tmp = path.join(os.tmpdir(), `checklist-${process.pid}-${Date.now()}.html`);
-  fs.writeFileSync(tmp, standaloneHtml(name, text, coloursFile()));
+  fs.writeFileSync(tmp, standaloneHtml(name, text, coloursFile(), checklistsDir()));
   const pdfWin = new BrowserWindow({ show: false, webPreferences: { sandbox: true } });
   try {
     await pdfWin.loadFile(tmp);
-    // The renderer lays out pages after fonts load; wait until they exist.
+    // The renderer lays out pages after fonts load; wait until they exist and their images have decoded.
     await pdfWin.webContents.executeJavaScript(`new Promise(r => {
-      const t = () => document.querySelector('#out .page') ? requestAnimationFrame(() => r(true)) : setTimeout(t, 50);
+      const t = () => document.querySelector('#out .page')
+        ? Promise.all([...document.images].map(i => i.decode().catch(() => {}))).then(() => requestAnimationFrame(() => r(true)))
+        : setTimeout(t, 50);
       t();
     })`);
     return await pdfWin.webContents.printToPDF({
