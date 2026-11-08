@@ -4,7 +4,7 @@
 @size A5
 @binding off
 @footer | v1
-=== C172RG 2 Normal Checklist · VH-RQU
+=== C172RG  Normal Checklist · VH-RQU
 
 # Before Starting Engine
 Preflight Inspection | COMPLETE
@@ -145,7 +145,7 @@ Vs  Stall, no flap | 50
 Vs0  Stall, full flap | 42
 Vx  Best angle of climb | 67
 Vy  Best rate of climb | 84
-Vg  Max glide | 61–73
+Vg  Best glide | 61–73
 
 // From POH Figure 5-7 Cruise Performance, sheet 1 (pressure altitude 2000 ft)
 === C172RG Cruise Performance · 2000 ft
@@ -269,6 +269,38 @@ RPM | MP | KTAS | GPH
 | 20 | 106 | 6.8
 | 19 | 98 | 6.4
 
+
+// Weight & balance worksheet, laid out like the school's C172N card.
+// Arms, limits and taxi allowance: POH Figures 6-3 and 6-5.
+// Basic empty weight: POH load data sheet (last page), 793.5 kg at arm 1019 mm, dated 31.5.2007
+// = 1749.4 lb, moment 70.2. CHECK against the current weight & balance record before use.
+=== C172RG Weight & Balance · VH-RQU
+@columns 1
+[img images/c172rg-loading-arrangements.png]
+> Baggage areas 1 + 2 combined max 200 lb · Check take-off weight & moment inside the CG envelope
+# Fuel
+Fuel load | Left | Right | Total
+Litres | | |
+# Loading (lb · moment lb-in/1000)
+Item | Weight | Arm | Moment
+Basic empty weight (check current) | 1749.4 | 40.1 | 70.2
+Pilot & front passenger |  | 37 |
+Rear passengers |  | 73 |
+Baggage area 1 · max 200 lb |  | 95 |
+Baggage area 2 · max 50 lb |  | 115 |
+
+Zero fuel weight |  |  |
+Fuel |  | 48 |
+Ramp weight · max 2658 lb |  |  |
+Start, taxi & run-up | −8 |  | −0.4
+
+Take-off weight · max 2650 lb |  |  |
+
+
+
+=== C172RG CG Moment Envelope · VH-RQU
+@columns 1
+[img images/c172rg-cg-envelope.png]
 
 === C172RG Emergency Checklist
 @paper pink
