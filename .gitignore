@@ -2,3 +2,4 @@ dist/
 poh/
 node_modules/
 release/
+graphify-out/
