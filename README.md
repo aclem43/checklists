@@ -84,6 +84,14 @@ Optional lines at the top of a checklist file:
 | `@columns` | columns per page                                          | `2`     |
 | `@binding` | `on` (wider inside margin, mirrored) / `off`              | `on`    |
 | `@footer`  | footer text on every page (see below)                     | none    |
+| `@paper`   | sheet colour: any CSS colour (`pink`, `#ffd6e0`, …)       | `paper` in `colours.toml` |
+
+`@paper` is the one setting that can apply to a single page. At the top of the file it colours every page; on a line after `===` it colours only that page:
+
+```
+=== Emergency Checklist
+@paper pink
+```
 
 `@footer` puts the same footer on every page. Use `|` to split it into left and right parts; without `|` the text is centred. `{page}` and `{pages}` are replaced with the page number and the page count:
 

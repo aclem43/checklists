@@ -169,6 +169,7 @@
         <tr data-snippet="@font 8.5"><td>@font 8.5</td><td>Starting text size in pt; shrinks to fit, down to 6 (default 8.5)</td></tr>
         <tr data-snippet="@columns 2"><td>@columns 2</td><td>Columns per page (default 2)</td></tr>
         <tr data-snippet="@footer Version 1 | Page {page} of {pages}"><td>@footer Left | Right</td><td>Footer on every page. {page} and {pages} become page numbers; without | it's centred</td></tr>
+        <tr data-snippet="@paper pink"><td>@paper colour</td><td>Sheet colour. At the top: every page. Under a === line: that page only</td></tr>
         <tr data-snippet="@binding off"><td>@binding on|off</td><td>Wider inside margin for spiral binding (default on)</td></tr>
       </table>
     </div>
@@ -451,6 +452,7 @@
       size: ['A5', 'A5-landscape', 'A4', 'A4-landscape', 'Letter', 'Letter-landscape'],
       font: ['8.5', '9', '10'], columns: ['2', '3'], binding: ['on', 'off'],
       footer: ['Version 1 | Page {page} of {pages}'],
+      paper: ['pink', 'white', '#ffd6e0'],
     };
     const COMMON_ACTIONS = ['ON', 'OFF', 'CHECK', 'SET', 'BOTH', 'OPEN', 'CLOSED', 'UP', 'DOWN', 'RICH', 'LEAN',
       'COMPLETE', 'SECURE', 'REMOVE', 'DISCONNECT', 'AS REQUIRED', 'AS DESIRED', 'ADJUST', 'RELEASE', 'COLD'];

@@ -147,6 +147,7 @@ Vy  Best rate of climb | 84
 Vg  Max glide | 61–73
 
 === C172RG Emergency Checklist
+@paper pink
 #  LANDING GEAR FAILS TO EXTEND
 Master Switch | ON
 Landing Gear Lever | DOWN
