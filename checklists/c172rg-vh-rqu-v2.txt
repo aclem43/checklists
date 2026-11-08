@@ -2,6 +2,7 @@
 // Based on the school's laminated "Normal Check List C172RG" card (2 sides, A4, 2 columns each).
 // Lines marked "corrected" differ from the card to match POH Section 2 limitations / Section 4.
 @size A5
+@binding off
 @footer | v1
 === C172RG 2 Normal Checklist · VH-RQU
 
@@ -145,6 +146,129 @@ Vs0  Stall, full flap | 42
 Vx  Best angle of climb | 67
 Vy  Best rate of climb | 84
 Vg  Max glide | 61–73
+
+// From POH Figure 5-7 Cruise Performance, sheet 1 (pressure altitude 2000 ft)
+=== C172RG Cruise Performance · 2000 ft
+> 2650 lb · Recommended lean · Cowl flaps closed
+# Standard temp · 11°C
+RPM | MP | KTAS | GPH
+
+2500 | 24 | 131 | 9.9
+| 23 | 128 | 9.4
+| 22 | 124 | 8.8
+| 21 | 120 | 8.3
+
+2400 | 25 | 132 | 10.1
+| 24 | 129 | 9.6
+| 23 | 126 | 9.0
+| 22 | 122 | 8.5
+
+2300 | 25 | 130 | 9.7
+| 24 | 127 | 9.2
+| 23 | 123 | 8.7
+| 22 | 119 | 8.2
+
+2200 | 24 | 124 | 8.9
+| 23 | 121 | 8.4
+| 22 | 116 | 7.9
+| 21 | 112 | 7.5
+
+2100 | 23 | 118 | 8.1
+| 22 | 114 | 7.6
+| 21 | 109 | 7.2
+| 20 | 103 | 6.7
+---
+> Best economy: leanest smooth mixture, or peak EGT
+# 20°C above standard · 31°C
+RPM | MP | KTAS | GPH
+
+2500 | 24 | 132 | 9.6
+| 23 | 128 | 9.1
+| 22 | 124 | 8.6
+| 21 | 120 | 8.1
+
+2400 | 25 | 133 | 9.8
+| 24 | 130 | 9.3
+| 23 | 126 | 8.8
+| 22 | 122 | 8.3
+
+2300 | 25 | 131 | 9.4
+| 24 | 127 | 8.9
+| 23 | 123 | 8.5
+| 22 | 119 | 8.0
+
+2200 | 24 | 125 | 8.6
+| 23 | 120 | 8.2
+| 22 | 116 | 7.7
+| 21 | 111 | 7.3
+
+2100 | 23 | 118 | 7.9
+| 22 | 113 | 7.4
+| 21 | 108 | 7.0
+| 20 | 101 | 6.6
+
+// From POH Figure 5-7 Cruise Performance, sheet 2 (pressure altitude 4000 ft)
+=== C172RG Cruise Performance · 4000 ft
+> 2650 lb · Recommended lean · Cowl flaps closed
+# Standard temp · 7°C
+RPM | MP | KTAS | GPH
+
+2500 | 24 | 135 | 10.2
+| 23 | 132 | 9.7
+| 22 | 128 | 9.1
+| 21 | 124 | 8.6
+
+2400 | 24 | 133 | 9.9
+| 23 | 130 | 9.3
+| 22 | 126 | 8.8
+| 21 | 121 | 8.3
+
+2300 | 25 | 134 | 10.1
+| 24 | 131 | 9.5
+| 23 | 127 | 9.0
+| 22 | 123 | 8.5
+
+2200 | 24 | 129 | 9.2
+| 23 | 125 | 8.7
+| 22 | 121 | 8.2
+| 21 | 116 | 7.7
+
+2100 | 23 | 122 | 8.4
+| 22 | 118 | 7.9
+| 21 | 113 | 7.4
+| 20 | 108 | 7.0
+| 19 | 101 | 6.6
+---
+> Best economy: leanest smooth mixture, or peak EGT
+# 20°C above standard · 27°C
+RPM | MP | KTAS | GPH
+
+2500 | 24 | 136 | 9.9
+| 23 | 132 | 9.4
+| 22 | 128 | 8.8
+| 21 | 124 | 8.3
+
+2400 | 24 | 134 | 9.6
+| 23 | 130 | 9.0
+| 22 | 126 | 8.5
+| 21 | 121 | 8.1
+
+2300 | 25 | 135 | 9.7
+| 24 | 131 | 9.2
+| 23 | 127 | 8.7
+| 22 | 123 | 8.3
+
+2200 | 24 | 129 | 8.9
+| 23 | 125 | 8.4
+| 22 | 120 | 8.0
+| 21 | 115 | 7.5
+
+2100 | 23 | 122 | 8.1
+| 22 | 117 | 7.7
+| 21 | 112 | 7.2
+| 20 | 106 | 6.8
+| 19 | 98 | 6.4
+
 
 === C172RG Emergency Checklist
 @paper pink
