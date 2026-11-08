@@ -121,3 +121,7 @@ Optional lines at the top of a checklist file:
 All colours are in `colours.toml`, and each one has a comment saying where it's used. Edit a value, then rebuild (or leave `--watch` running). The build stops if a colour the stylesheet needs is missing, and warns about entries nothing uses.
 
 To change the font, edit `lib/checklist.css`.
+
+## License
+
+Licensed under [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/). See `LICENSE`.

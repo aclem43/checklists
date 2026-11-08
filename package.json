@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Edit plain-text aircraft checklists with a live print preview and export them to PDF.",
   "author": "Alexi Clemeur",
-  "license": "UNLICENSED",
+  "license": "CC-BY-4.0",
   "private": true,
   "main": "app/main.js",
   "desktopName": "checklist-editor.desktop",
