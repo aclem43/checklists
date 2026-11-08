@@ -74,14 +74,14 @@ Strobe Lights | AS DESIRED
 Throttle Friction Lock | ADJUST
 Parking Brake | OFF
 ! Departure & Safety Take-off Brief
-
+---
 # 6. Holding Point Checks
 ~ M | Mixture
 ~ C | Compass
 ~ A | Altimeter
 ~ S | Switches
 ~ T³ | Transponder, Talk and Time
----
+
 # Normal Takeoff
 Flaps | 0°
 Power | FULL THROTTLE & 2700 RPM
@@ -97,6 +97,7 @@ Elevator |
 // corrected: card says "63 KIAS after all obstacles are cleared"; POH 4-9 says until cleared
 Climb Speed | 63 KIAS until all obstacles cleared
 Landing Gear | RETRACT after all obstacles cleared
+===
 
 # Bumfish
 Brakes | Check
@@ -113,7 +114,6 @@ Undercarriage | Down & Green
 Flaps | Set
 Landing Clearance | Recieved or Expected
 Runway/Windsock | Check
-===
 # After Landing
 Flaps | UP
 Carburetor Heat | OFF
@@ -121,7 +121,7 @@ Cowl Flaps | OPEN
 Transponder | STBY
 Mixture | Lean for Taxi
 Elevator Trim | Takeoff
-
+---
 # Engine Shut Down
 Parking Brake | OFF
 Throttle | 1000 RPM
@@ -132,7 +132,7 @@ Master Switch | OFF
 Control Wheel Lock | INSTALL
 Fuel Selector Valve | RIGHT
 
----
+
 #! V Speeds (KIAS)
 Va  Manoeuvring 1202 / 1020 / 839 kg | 106 / 98 / 89
 Vfe  Max flap extension 10° | 130
