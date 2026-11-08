@@ -68,6 +68,8 @@ On screen, a page whose text had to shrink shows a small note, and a page that o
 !! Text         big red warning (e.g. CLEAR PROP!)
 ~ M | Text      mnemonic row (letter on the left, text centred)
 Item | Action   normal row
+A | B | C       table row: with two or more |, consecutive rows line up in columns.
+                A blank line between table rows draws a heavier rule (e.g. to group by RPM)
 // comment      ignored
 ```
 

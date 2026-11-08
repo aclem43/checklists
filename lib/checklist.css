@@ -65,6 +65,15 @@ body {
 .row.mn .i { width: 1.8em; flex: none; }
 .row.mn .a { flex: 1; text-align: center; }
 
+/* A | B | C rows: columns line up; first column styled like an item, the rest like actions */
+.tbl { width: 100%; border-collapse: collapse; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.tbl td {
+  border-bottom: .3mm solid var(--c-rule); padding: .3em .25em;
+  color: var(--c-action); font-weight: 700; text-align: right;
+}
+.tbl td:first-child { color: var(--c-item); font-weight: 400; text-align: left; }
+.tbl tr.group td { border-top: .7mm solid var(--c-header); } /* blank line between table rows */
+
 .note, .warn, .sub {
   text-align: center; border-bottom: .3mm solid var(--c-rule);
   padding: .3em .25em; line-height: 1.2; font-weight: 700;
