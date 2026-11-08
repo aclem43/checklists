@@ -1,0 +1,208 @@
+// Cessna 172N, VH-KJR
+// Transcribed from the school's "10. C-172N Check List" card and "9. Maintenance Release
+// and Pre-flight Inspection" card. Section 4 is missing on the original card too.
+@size A5
+@footer VH-KJR | Page {page} of {pages}
+
+=== C172N Pre-flight · VH-KJR
+# Maintenance Release
+Expiry Date | ____________
+Expiry Hours | ____________
+Hours to Date | ____________
+Hours to Run | ____________
+#! Preflight Inspection
+# 1. Cabin
+Documents | Check
+Control Wheel Lock & Throttle Lock | Remove
+Ignition Switch | Off
+Avionics | Off
+Master Switch | On
+Fuel Quantity Indicators | Check Qty
+Flaps | Lower
+Lights | Check All
+Master Switch | Off
+Alternate Static | Off
+Fuel Selector | Both
+Baggage Door | Check
+# 2. Empennage
+Fuselage Skin | Inspect
+Rudder Gust Lock | Remove
+Tail Tie-Down | Disconnect
+Control Surfaces | Check
+# 3. Right Wing Trailing Edge
+Flap | Check
+Aileron | Check
+# 4. Right Wing
+Wing Tie-Down | Disconnect
+Main Wheel Tyre | Check
+Fuel Drain | Check
+Fuel Quantity | Check Visually
+Fuel Filler Cap | Secure
+---
+# 5. Nose
+Engine Oil | Check
+> Minimum dipstick indication five quarts. Fill to six quarts for extended flight.
+Engine Oil Fill Cap | Check in detent
+Fuel Strainer Drain | Pull for 4 seconds
+Propeller and Spinner | Check
+Carburettor Air Filter | Check
+Nose Wheel Strut | Check
+Nose Wheel Tyre | Check
+Static Source Opening | Check
+# 6. Left Wing
+Main Wheel Tyre | Check
+Fuel Drain | Check
+Fuel Quantity | Check Visually
+Fuel Filler Cap | Secure
+# 7. Left Wing Leading Edge
+Pitot Tube Cover | Remove
+Pitot Tube | Check
+Fuel Tank Vent | Check
+Stall Warning Opening | Check
+Wing Tie-Down | Disconnect
+Landing Lights | Check
+# 8. Left Wing Trailing Edge
+Aileron | Check
+Flap | Check
+
+=== C172N Normal Checklist · VH-KJR
+# 1. Before Start
+ATIS | Check
+Pre-Flight Inspection | Complete
+Taxi Brief | Complete
+Passenger Brief | Completed
+MR & Running Sheet | Completed
+Seats & Harnesses | Adjust and Lock
+Fuel Selector Valve | Both, Sufficient
+Avionics | Off
+Instruments | Check
+Brakes | Test and Set
+Circuit Breakers | Check In
+Cargo Door | Closed & Secure
+Cabin Doors | Closed & Secure
+# 2. Engine Start
+Mixture | Rich
+Carburettor Heat | Cold
+Master Switch | On
+Beacon | On
+Prime | As Required
+> 1 to 2 strokes; none if engine is warm
+Throttle | Open 1/8 inch
+Propeller Area | CLEAR
+!! Clear Prop!
+Ignition Switch | Start
+Oil Pressure | Check
+RPM | 1000
+Ammeter | Check
+Mixture | Lean for Taxi
+Flaps | Up
+Alternator | On
+Avionics | On
+---
+# 3. After Start Checks
+ATIS | Check
+Altimeter | QNH Set, Check Tolerance (±100')
+Radio | Check
+Brakes | Check
+Instruments | Check
+#! Radio Frequencies
+AF CTAF (AFRU) | 118.10
+AF ATIS | 120.90
+AF AWIS (1 sec pulse) | 128.40
+AF Ground | 119.90
+AF Tower (North) | 123.60
+AF Tower (South) | 118.10
+BN Centre | 125.70
+BN Centre (STA) | 119.50
+Heck Field | 119.00
+#! Transponder Codes
+Class D | 3000 + ALT
+Class G | 1200 + ALT
+#! Light Signals
+> On ground
+Green | Authorised to take off*
+Green flashing | Authorised to taxi*
+Red | Stop
+Red flashing | Taxi clear of landing area in use
+White flashing | Return to starting point on aerodrome
+> In flight
+Green | Authorised to land*
+Green flashing | Return for landing
+Red | Give way to other aircraft and continue circling
+Red flashing | Do not land, aerodrome unsafe
+> * if pilot is satisfied that no collision risk exists
+
+===
+# 5. Before Takeoff
+>! Parked into Wind
+Park Brake | Set
+Position | Check
+Cabin Doors and Windows | Closed and Locked
+Flight Controls | Free and Correct
+Flight Instruments | Set and Check
+Fuel Selector Valve | Both, Sufficient
+Mixture | Rich (below 5000')
+Elevator Trim | Take-off
+Throttle | 1600 RPM
+Magnetos Check | Max drop 125 RPM, Max Diff. 50 RPM
+If Spark Plug Fouling Occurs | 2000 RPM, lean until RPM decreases, then richen slightly, 60 seconds, re-check & repeat as required
+Carb Heat | Check (for RPM drop)
+Engine T's, P's & Ammeter | Check
+Throttle Idle | Check
+Throttle | 1000 RPM
+Radios | Set
+Throttle Friction Lock | Adjust
+Wing Flaps | Up / As Required
+Primer | Locked
+Mixture | Lean
+! Departure & Safety Take-off Brief
+# 6. Holding Point Checks
+~ M | Mixture
+~ C | Compass
+~ A | Altimeter
+~ S | Switches
+~ T³ | Transponder, Talk and Time
+# 7. After Take-off
+> Above 300ft AGL
+Positive RoC | Check
+Temp & Pressure | Green / Stable
+Flaps | Retract if deployed
+Trim | Set
+---
+# 8. Cruise
+Power | 2200–2700 RPM
+Elevator and Rudder Trim | Adjust
+Mixture | Lean
+# 9. Before Landing
+! Arrival Brief
+Brakes | Check & Off
+Undercarriage | Fixed
+Mixture | Rich
+Fuel | Both, Sufficient
+Instruments | Check
+Switches | As Required
+Hatches/Harness | Secure
+# 10. Finals Check
+Propeller Pitch | Fine
+Undercarriage | Fixed
+Flaps | Set
+Carb Heat | Cold
+# 11. After Landing
+Wing Flaps | Identify & Up
+Carburettor Heat | Cold
+Mixture | Lean for Taxi
+Elevator Trim | Takeoff
+Switches | Switches
+Transponder | Standby
+Radio | Freq / Transmit
+# 12. Shutdown
+Parking Brake | Set
+Throttle | 1000 RPM
+Magnetos | Check
+Avionics | Off
+Mixture | Idle cut-off
+Ignition Switch | Off, Key out
+Alternator | Off
+Master Switch | Off
+Control Lock | Install
+Documentation | Complete

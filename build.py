@@ -48,24 +48,11 @@ if (location.protocol.startsWith('http')) (function poll(seen) {
 })();
 </script>"""
 
-STARTER = """\
-// Settings (optional): @size A5 | A4 | Letter (add -landscape), @font 8.5, @columns 2, @binding on|off,
-// @footer Left text | Right text   ({{page}} and {{pages}} become page numbers)
-@size A5
-@footer Version 1 | Page {{page}} of {{pages}}
+STARTER = LIB / "starter.txt"  # new-checklist template; {name} is replaced
 
-=== {name} Checklist
-# 1. Before Start
-Item | Action
-Another item | Check
-! A yellow brief bar
----
-# 2. Next Section
->! A red sub-label
-Item | Action
-!! BIG WARNING
-~ M | Mnemonic row
-"""
+
+def starter(name):
+    return STARTER.read_text(encoding="utf-8").replace("{name}", name)
 
 
 def slugify(name):
@@ -231,7 +218,7 @@ class PreviewHandler(http.server.SimpleHTTPRequestHandler):
             return self.send_body(path.read_text(encoding="utf-8"), "text/plain; charset=utf-8")
         if url.path == "/__api/starter":
             name = parse_qs(url.query).get("name", ["New"])[0]
-            return self.send_body(STARTER.format(name=name), "text/plain; charset=utf-8")
+            return self.send_body(starter(name), "text/plain; charset=utf-8")
         return super().do_GET()
 
     def do_PUT(self):
@@ -313,7 +300,7 @@ def main(argv):
         if path.exists():
             raise SystemExit(f"{path.relative_to(ROOT)} already exists")
         SRC.mkdir(exist_ok=True)
-        path.write_text(STARTER.format(name=name), encoding="utf-8")
+        path.write_text(starter(name), encoding="utf-8")
         print(f"Created {path.relative_to(ROOT)}")
         build_all()
         return

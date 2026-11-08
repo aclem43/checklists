@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Checklist Editor</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024' width='1024' height='1024'%3E%3Cdefs%3E%3ClinearGradient id='tile' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%233d4bb0'/%3E%3Cstop offset='1' stop-color='%2326307a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='80' y='80' width='864' height='864' rx='196' fill='url%28%23tile%29'/%3E%3Crect x='240' y='216' width='544' height='672' rx='44' fill='%230b1040' fill-opacity='.28'/%3E%3Crect x='240' y='198' width='544' height='672' rx='44' fill='%23ffffff'/%3E%3Crect x='392' y='150' width='240' height='104' rx='34' fill='%23c8ccda'/%3E%3Crect x='452' y='174' width='120' height='30' rx='15' fill='%239ea4b8'/%3E%3Crect x='294' y='292' width='436' height='80' rx='14' fill='%23e4452f'/%3E%3Cg%3E%3Crect x='300' y='416' width='200' height='30' rx='15' fill='%23c5c9d6'/%3E%3Crect x='578' y='416' width='146' height='30' rx='15' fill='%231f3c9e'/%3E%3Crect x='300' y='492' width='236' height='30' rx='15' fill='%23c5c9d6'/%3E%3Crect x='612' y='492' width='112' height='30' rx='15' fill='%231f3c9e'/%3E%3Crect x='300' y='568' width='176' height='30' rx='15' fill='%23c5c9d6'/%3E%3Crect x='566' y='568' width='158' height='30' rx='15' fill='%231f3c9e'/%3E%3Crect x='300' y='644' width='218' height='30' rx='15' fill='%23c5c9d6'/%3E%3Crect x='626' y='644' width='98' height='30' rx='15' fill='%231f3c9e'/%3E%3C/g%3E%3Crect x='294' y='720' width='436' height='64' rx='14' fill='%23f7e463'/%3E%3C/svg%3E">
 <style>
   :root {
     --bg: #f6f6f8; --panel: #ffffff; --line: #d9d9e0; --text: #1f2330; --muted: #6b7080;
@@ -85,6 +86,19 @@
   .t-act { color: var(--t-act); }
   .t-mark { color: var(--t-mark); }
 
+  /* Autocomplete popup */
+  #ac {
+    position: absolute; z-index: 20; display: none; min-width: 240px; max-width: 520px; margin: 0; padding: 4px 0;
+    list-style: none; background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .25); font: 13px/1.35 ui-monospace, "Cascadia Mono", "DejaVu Sans Mono", monospace;
+  }
+  #ac.open { display: block; }
+  #ac li { display: flex; justify-content: space-between; gap: 14px; padding: 3px 10px; cursor: pointer; white-space: pre; }
+  #ac li.sel { background: var(--accent); color: var(--accent-text); }
+  #ac li b { font-weight: 700; }
+  #ac .hint { color: var(--muted); font: 11.5px/1.6 system-ui, sans-serif; }
+  #ac li.sel .hint { color: inherit; opacity: .8; }
+
   footer {
     display: flex; gap: 12px; align-items: center; padding: 4px 12px; min-height: 28px;
     border-top: 1px solid var(--line); background: var(--panel); color: var(--muted); font-size: 12.5px;
@@ -121,8 +135,9 @@
   <span id="state"></span>
   <span class="spacer"></span>
   <button id="helpBtn" aria-expanded="false">Syntax</button>
-  <button id="print">Print / PDF</button>
-  <a href="/" title="Built pages">All checklists</a>
+  <button id="print">Print</button>
+  <button id="pdf" hidden title="Ctrl+E">Export PDF</button>
+  <a id="allLink" href="/" title="Built pages">All checklists</a>
 </header>
 <main>
   <section id="left">
@@ -130,11 +145,14 @@
       <pre id="gutter" aria-hidden="true"></pre>
       <div class="area">
         <pre id="hl" aria-hidden="true"></pre>
-        <textarea id="src" spellcheck="false" wrap="off" autocapitalize="off" autocomplete="off" aria-label="Checklist source"></textarea>
+        <textarea id="src" spellcheck="false" wrap="off" autocapitalize="off" autocomplete="off" aria-label="Checklist source"
+          aria-autocomplete="list" aria-controls="ac"></textarea>
+        <ul id="ac" role="listbox" aria-label="Suggestions"></ul>
       </div>
     </div>
     <div id="help">
-      <p>Click a line to insert it below the cursor.</p>
+      <p>Click a line to insert it below the cursor. Suggestions appear as you type (Ctrl+Space to ask);
+        ↑/↓ to choose, Enter or Tab to accept, Esc to close.</p>
       <table>
         <tr data-snippet="=== Title"><td>=== Title</td><td>New page (title optional). Every second page is mirrored for binding</td></tr>
         <tr data-snippet="---"><td>---</td><td>Move to the next column</td></tr>
@@ -158,7 +176,7 @@
   </section>
   <div id="split" role="separator" aria-orientation="vertical" title="Drag to resize"></div>
   <section id="right">
-    <iframe id="preview" src="/__preview" title="Preview"></iframe>
+    <iframe id="preview" title="Preview"></iframe>
   </section>
 </main>
 
@@ -302,14 +320,7 @@
     p && p.scrollIntoView({ block: 'start' });
   });
 
-  // ---------- files ----------
-  const dirty = () => current && src.value !== savedText;
-  function updateState(msg, cls) {
-    if (msg === undefined) { msg = dirty() ? '● Unsaved' : current ? 'Saved' : ''; cls = dirty() ? 'dirty' : ''; }
-    state.textContent = msg;
-    state.className = cls || '';
-    document.title = (dirty() ? '● ' : '') + (current ? current + ' — ' : '') + 'Checklist Editor';
-  }
+  // ---------- backend: the Electron app (window.checklistAPI) or the build.py server ----------
   async function api(path, opts) {
     const r = await fetch(path, { cache: 'no-store', ...opts });
     if (!r.ok) {
@@ -319,15 +330,57 @@
     }
     return r;
   }
+  const q = name => encodeURIComponent(name);
+  const put = (url, text) => api(url, { method: 'PUT', body: text, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+  const backend = window.checklistAPI || {
+    list: async () => (await api('/__api/list')).json(),
+    read: async name => (await api('/__api/file?name=' + q(name))).text(),
+    write: (name, text, create) => put(`/__api/file?name=${q(name)}${create ? '&create' : ''}`, text),
+    starter: async title => (await api('/__api/starter?name=' + q(title))).text(),
+    // Server mode: poll the build id; any rebuild may mean a file changed on disk.
+    onFileChanged(cb) {
+      let id = null;
+      (async function poll() {
+        try {
+          const s = await (await api('/__build')).json();
+          if (id && s.id !== id) cb(current);
+          id = s.id;
+        } catch {}
+        setTimeout(poll, 1000);
+      })();
+    },
+  };
+  const isApp = !!window.checklistAPI;
+  if (isApp) { $('pdf').hidden = false; $('allLink').hidden = true; }
+
+  // The preview page: generated by the app, or served by build.py (which reloads it itself).
+  async function loadPreview() {
+    if (backend.previewHtml) {
+      try { frame.srcdoc = await backend.previewHtml(); }
+      catch (e) { updateState(e.message, 'err'); }
+    } else frame.src = '/__preview';
+  }
+
+  // ---------- files ----------
+  const dirty = () => current && src.value !== savedText;
+  function updateState(msg, cls) {
+    if (msg === undefined) { msg = dirty() ? '● Unsaved' : current ? 'Saved' : ''; cls = dirty() ? 'dirty' : ''; }
+    state.textContent = msg;
+    state.className = cls || '';
+    document.title = (dirty() ? '● ' : '') + (current ? current + ' — ' : '') + 'Checklist Editor';
+  }
   async function loadList(select) {
-    const names = await (await api('/__api/list')).json();
+    const names = await backend.list();
+    ac.loadCorpus(names);
     fileSel.innerHTML = names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
     const pick = select && names.includes(select) ? select : names.includes(store.get('editor.file')) ? store.get('editor.file') : names[0];
     if (pick) await open(pick);
     else { current = null; src.value = ''; savedText = ''; paint(); scheduleRender(); updateState('No checklists yet: click New…'); }
   }
   async function open(name) {
-    const text = await (await api('/__api/file?name=' + encodeURIComponent(name))).text();
+    const text = await backend.read(name);
+    ac.close();
+    ac.remember(current, savedText); // the file we're leaving, as saved, feeds suggestions again
     current = name;
     fileSel.value = name;
     store.set('editor.file', name);
@@ -344,8 +397,9 @@
     if (!current || !dirty()) return;
     const text = src.value;
     try {
-      await api('/__api/file?name=' + encodeURIComponent(current), { method: 'PUT', body: text, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+      await backend.write(current, text);
       savedText = text;
+      ac.remember(current, text);
       updateState();
     } catch (e) { updateState('Save failed: ' + e.message, 'err'); }
   }
@@ -356,34 +410,239 @@
     if (!name) return;
     if (dirty() && !confirm('Discard unsaved changes to ' + current + '?')) return;
     try {
-      const starter = await (await api('/__api/starter?name=' + encodeURIComponent(title))).text();
-      await api(`/__api/file?name=${encodeURIComponent(name)}&create`, { method: 'PUT', body: starter, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+      await backend.write(name, await backend.starter(title), true);
       await loadList(name);
     } catch (e) { updateState(e.message, 'err'); }
   }
 
   // Pick up edits made elsewhere (e.g. VS Code) when there are no unsaved changes here.
-  let buildId = null;
-  async function pollBuild() {
+  async function reloadIfChanged(name) {
+    if (!current || name !== current || dirty()) return;
     try {
-      const s = await (await api('/__build')).json();
-      if (buildId && s.id !== buildId && current && !dirty()) {
-        const text = await (await api('/__api/file?name=' + encodeURIComponent(current))).text();
-        if (text !== src.value) {
-          const pos = src.selectionStart, top = src.scrollTop;
-          src.value = savedText = text;
-          src.setSelectionRange(Math.min(pos, text.length), Math.min(pos, text.length));
-          src.scrollTop = top;
-          paint(); scheduleRender(); updateState('Reloaded from disk');
-        }
-      }
-      buildId = s.id;
+      const text = await backend.read(current);
+      if (text === src.value) return;
+      const pos = src.selectionStart, top = src.scrollTop;
+      src.value = savedText = text;
+      src.setSelectionRange(Math.min(pos, text.length), Math.min(pos, text.length));
+      src.scrollTop = top;
+      paint(); scheduleRender(); updateState('Reloaded from disk');
     } catch {}
-    setTimeout(pollBuild, 1000);
   }
 
+  async function exportFile(kind) {
+    if (!current) return;
+    updateState(kind === 'pdf' ? 'Exporting PDF…' : 'Exporting…');
+    try {
+      const out = await (kind === 'pdf' ? backend.exportPdf : backend.exportHtml)(current, src.value);
+      if (!out) return updateState();
+      updateState('Exported ' + out.split(/[\\/]/).pop());
+      backend.reveal(out);
+    } catch (e) { updateState('Export failed: ' + e.message, 'err'); }
+  }
+
+  // ---------- autocomplete ----------
+  // Suggestions come from every checklist (so they use your own wording), ranked by how often
+  // each text is used. After "Item |", actions already used with that item come first.
+  const ac = (function () {
+    const box = $('ac');
+    const MARKERS = ['===', '#!', '#', '>!', '>', '!!', '!']; // longest first where they share a prefix
+    const MARKER_HINT = { '===': 'page title', '#!': 'red header', '#': 'header', '>!': 'red sub-label', '>': 'sub-label', '!!': 'warning', '!': 'brief' };
+    const SETTINGS = {
+      size: ['A5', 'A5-landscape', 'A4', 'A4-landscape', 'Letter', 'Letter-landscape'],
+      font: ['8.5', '9', '10'], columns: ['2', '3'], binding: ['on', 'off'],
+      footer: ['Version 1 | Page {page} of {pages}'],
+    };
+    const COMMON_ACTIONS = ['ON', 'OFF', 'CHECK', 'SET', 'BOTH', 'OPEN', 'CLOSED', 'UP', 'DOWN', 'RICH', 'LEAN',
+      'COMPLETE', 'SECURE', 'REMOVE', 'DISCONNECT', 'AS REQUIRED', 'AS DESIRED', 'ADJUST', 'RELEASE', 'COLD'];
+    const LINE_TYPES = [
+      ['# ', 'section header'], ['#! ', 'red section header'], ['=== ', 'new page'], ['---', 'next column'],
+      ['> ', 'sub-label'], ['>! ', 'red sub-label'], ['! ', 'yellow brief bar'], ['!! ', 'big red warning'],
+      ['~ ', 'mnemonic row'], ['// ', 'comment'], ['@', 'setting'],
+    ];
+    const others = {}; // checklist name -> text, for the files not open
+    let items = [], sel = 0, start = 0, suppress = false;
+
+    async function loadCorpus(names) {
+      for (const n of names) { try { others[n] = await backend.read(n); } catch {} }
+    }
+    function remember(name, text) { if (name) others[name] = text; }
+
+    // Count items, actions, item->action pairs and marker lines across all text except the caret's line.
+    function corpus(skipLine) {
+      const c = { items: new Map(), actions: new Map(), pairs: new Map(), typed: {} };
+      const bump = (m, k) => m.set(k, (m.get(k) || 0) + 1);
+      const own = src.value.split('\n').filter((_, i) => i !== skipLine).join('\n');
+      const texts = Object.keys(others).filter(n => n !== current).map(n => others[n]).concat(own);
+      for (const text of texts) for (const raw of text.split('\n')) {
+        const l = raw.trim();
+        if (!l || l.startsWith('//') || l.startsWith('@') || l === '---' || l.startsWith('~')) continue;
+        const mk = MARKERS.find(m => l.startsWith(m));
+        if (mk) { const t = l.slice(mk.length).trim(); if (t) bump(c.typed[mk] ||= new Map(), t); continue; }
+        const i = l.indexOf('|');
+        if (i < 0) continue;
+        const item = l.slice(0, i).trim(), act = l.slice(i + 1).trim();
+        if (item) bump(c.items, item);
+        if (act) {
+          bump(c.actions, act);
+          const k = item.toLowerCase();
+          if (!c.pairs.has(k)) c.pairs.set(k, new Map());
+          bump(c.pairs.get(k), act);
+        }
+      }
+      return c;
+    }
+
+    // Match `prefix` against map keys: whole-text prefix beats word prefix; then pair use, then frequency.
+    function rank(map, prefix, pairs, wrap) {
+      const p = prefix.toLowerCase(), out = [];
+      for (const [text, n] of map) {
+        const t = text.toLowerCase();
+        if (t === p) continue;
+        // Matching the start of a later word ("sel" -> "Fuel Selector Valve") needs 2+ letters.
+        const tier = !p ? 1 : t.startsWith(p) ? 3 : p.length > 1 && t.split(/[\s(\/&,-]+/).some(w => w.startsWith(p)) ? 2 : 0;
+        if (!tier) continue;
+        const paired = pairs?.get(text) || 0;
+        out.push({ ...wrap(text, n, paired), score: tier * 1e6 + paired * 1e3 + n });
+      }
+      return out.sort((a, b) => b.score - a.score || a.text.localeCompare(b.text)).slice(0, 8);
+    }
+    const times = n => n > 1 ? `used ${n}×` : n === 1 ? 'used once' : '';
+
+    // Work out what to suggest for the text before the caret. Only at the end of a line.
+    function suggestions(force) {
+      const pos = src.selectionStart, v = src.value;
+      if (pos !== src.selectionEnd) return null;
+      const ls = v.lastIndexOf('\n', pos - 1) + 1;
+      let le = v.indexOf('\n', pos); if (le < 0) le = v.length;
+      if (v.slice(pos, le).trim()) return null;
+      const before = v.slice(ls, pos), t = before.trimStart(), lead = ls + before.length - t.length;
+      const lineNo = v.slice(0, ls).split('\n').length - 1;
+
+      if (!t) return force ? { start: pos, prefix: '', list: LINE_TYPES.map(([s, h]) => ({ text: s, insert: s, hint: h, reopen: s !== '---' })) } : null;
+
+      if (t.startsWith('@')) {
+        let m = t.match(/^@(\w*)$/);
+        if (m) return { start: lead, prefix: t, list: Object.keys(SETTINGS).filter(k => k.startsWith(m[1].toLowerCase()) && k !== m[1])
+          .map(k => ({ text: '@' + k, insert: '@' + k + ' ', hint: 'setting', reopen: true })) };
+        m = t.match(/^@(\w+)\s+(.*)$/);
+        if (m && SETTINGS[m[1].toLowerCase()]) return { start: pos - m[2].length, prefix: m[2],
+          list: SETTINGS[m[1].toLowerCase()].filter(o => o.toLowerCase().startsWith(m[2].toLowerCase()) && o !== m[2]).map(o => ({ text: o, insert: o })) };
+        return null;
+      }
+
+      const c = corpus(lineNo);
+      const mk = MARKERS.find(m => t.startsWith(m));
+      if (mk) {
+        const rest = t.slice(mk.length);
+        if (!rest.startsWith(' ') && !force) return null; // wait for "# " so "#!" etc. can be typed
+        const prefix = rest.trimStart();
+        if (!rest.startsWith(' ')) return { start: pos, prefix: '', list: rank(c.typed[mk] || new Map(), '', null, (s, n) => ({ text: s, insert: ' ' + s, hint: times(n) })) };
+        return { start: pos - prefix.length, prefix, list: rank(c.typed[mk] || new Map(), prefix, null, (s, n) => ({ text: s, insert: s, hint: times(n) || MARKER_HINT[mk] })) };
+      }
+      if (t.startsWith('~')) return null; // mnemonic rows are one-offs
+
+      const bar = t.indexOf('|');
+      if (bar >= 0) { // action
+        const item = t.slice(0, bar).trim(), after = t.slice(bar + 1), prefix = after.trim();
+        const actions = new Map(c.actions);
+        COMMON_ACTIONS.forEach(a => actions.has(a) || actions.set(a, 0));
+        const pairs = c.pairs.get(item.toLowerCase());
+        const list = rank(actions, prefix, pairs, (s, n, paired) => ({
+          text: s, insert: ' ' + s, hint: paired ? `with ${item.length > 18 ? 'this item' : item}` : times(n),
+        }));
+        return { start: lead + bar + 1, prefix, list };
+      }
+      if (t.length < 2 && !force) return null; // item
+      return { start: lead, prefix: t, list: rank(c.items, t, null, (s, n) => ({ text: s, insert: s + ' | ', hint: times(n), reopen: true })) };
+    }
+
+    // Caret position in px within the editor area (monospace, fixed line height, no wrapping).
+    let charW = 0;
+    function caretXY(pos) {
+      if (!charW) {
+        const probe = document.createElement('span');
+        probe.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;font:inherit';
+        probe.textContent = 'M'.repeat(100);
+        src.parentNode.appendChild(probe);
+        charW = probe.getBoundingClientRect().width / 100;
+        probe.remove();
+      }
+      const v = src.value, ls = v.lastIndexOf('\n', pos - 1) + 1;
+      const row = v.slice(0, ls).split('\n').length - 1, col = pos - ls;
+      const cs = getComputedStyle(src), lh = parseFloat(cs.lineHeight);
+      return { x: parseFloat(cs.paddingLeft) + col * charW - src.scrollLeft, y: parseFloat(cs.paddingTop) + row * lh - src.scrollTop, lh };
+    }
+
+    function show(res) {
+      if (!res || !res.list.length) return close();
+      items = res.list; start = res.start; sel = 0;
+      const p = res.prefix.toLowerCase();
+      box.innerHTML = items.map((s, i) => {
+        const k = p ? s.text.toLowerCase().indexOf(p) : -1;
+        const label = k < 0 ? esc(s.text) : esc(s.text.slice(0, k)) + '<b>' + esc(s.text.slice(k, k + p.length)) + '</b>' + esc(s.text.slice(k + p.length));
+        return `<li role="option" id="ac-${i}" data-i="${i}"${i === sel ? ' class="sel" aria-selected="true"' : ''}><span>${label}</span><span class="hint">${esc(s.hint || '')}</span></li>`;
+      }).join('');
+      box.classList.add('open');
+      src.setAttribute('aria-expanded', 'true');
+      src.setAttribute('aria-activedescendant', 'ac-0');
+      const { x, y, lh } = caretXY(start), area = src.parentNode;
+      const h = box.offsetHeight, w = box.offsetWidth;
+      box.style.left = Math.max(0, Math.min(x - 10, area.clientWidth - w - 4)) + 'px';
+      box.style.top = (y + lh + h + 4 > area.clientHeight && y - h - 2 > 0 ? y - h - 2 : y + lh + 2) + 'px';
+    }
+    function close() {
+      box.classList.remove('open');
+      items = [];
+      src.setAttribute('aria-expanded', 'false');
+      src.removeAttribute('aria-activedescendant');
+    }
+    const isOpen = () => box.classList.contains('open');
+    function move(d) {
+      sel = (sel + d + items.length) % items.length;
+      box.querySelectorAll('li').forEach((li, i) => { li.classList.toggle('sel', i === sel); li.toggleAttribute('aria-selected', i === sel); });
+      src.setAttribute('aria-activedescendant', 'ac-' + sel);
+      box.children[sel].scrollIntoView({ block: 'nearest' });
+    }
+    function accept(i = sel) {
+      const s = items[i];
+      if (!s) return;
+      close();
+      suppress = true;
+      src.setSelectionRange(start, src.selectionStart);
+      document.execCommand('insertText', false, s.insert); // keeps undo history
+      suppress = false;
+      if (s.reopen) show(suggestions(true));
+    }
+
+    box.addEventListener('mousedown', e => {
+      e.preventDefault(); // keep focus in the textarea
+      const li = e.target.closest('li');
+      if (li) accept(+li.dataset.i);
+    });
+    src.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.code === 'Space') { e.preventDefault(); show(suggestions(true)); return; }
+      if (!isOpen()) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); move(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
+      else if (e.key === 'Enter' || e.key === 'Tab') { e.preventDefault(); accept(); }
+      else if (e.key === 'Escape') { e.preventDefault(); close(); }
+    });
+    src.addEventListener('blur', close);
+    src.addEventListener('scroll', close);
+    src.addEventListener('mousedown', close);
+
+    return {
+      loadCorpus, remember, close,
+      onInput(e) {
+        if (suppress) return;
+        if (e.inputType === 'insertText' || (isOpen() && e.inputType?.startsWith('delete'))) show(suggestions(false));
+        else close();
+      },
+    };
+  })();
+
   // ---------- wiring ----------
-  src.addEventListener('input', () => { paint(); scheduleRender(); updateState(); onCursor(); });
+  src.addEventListener('input', e => { paint(); scheduleRender(); updateState(); onCursor(); ac.onInput(e); });
   src.addEventListener('scroll', syncScroll);
   ['keyup', 'click', 'select'].forEach(ev => src.addEventListener(ev, onCursor));
   fileSel.addEventListener('change', () => {
@@ -393,6 +652,16 @@
   $('save').addEventListener('click', save);
   $('new').addEventListener('click', create);
   $('print').addEventListener('click', () => frame.contentWindow.print());
+  $('pdf').addEventListener('click', () => exportFile('pdf'));
+  if (isApp) {
+    backend.onAssetsChanged(loadPreview);
+    backend.onMenu(cmd => ({
+      new: create, save, print: () => frame.contentWindow.print(),
+      'export-pdf': () => exportFile('pdf'), 'export-html': () => exportFile('html'),
+      'workspace-changed': () => loadList(),
+    })[cmd]?.());
+  }
+  backend.onFileChanged(reloadIfChanged);
   $('helpBtn').addEventListener('click', e => {
     const open = $('help').classList.toggle('open');
     e.currentTarget.setAttribute('aria-expanded', open);
@@ -432,8 +701,8 @@
     render();
   });
 
+  loadPreview();
   loadList().catch(e => updateState('Could not load checklists: ' + e.message, 'err'));
-  pollBuild();
 })();
 </script>
 </body>

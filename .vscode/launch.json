@@ -4,39 +4,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Open checklist editor",
+      "name": "Run desktop app (Electron)",
       "type": "node-terminal",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "command": "python3 build.py edit"
+      "command": "npm start"
     },
-    {
-      "name": "Build & watch checklists",
-      "type": "node-terminal",
-      "request": "launch",
-      "cwd": "${workspaceFolder}",
-      "command": "python3 build.py --watch --open"
-    },
-    {
-      "name": "Build checklists & open in browser",
-      "type": "node-terminal",
-      "request": "launch",
-      "cwd": "${workspaceFolder}",
-      "command": "python3 build.py && xdg-open dist/index.html"
-    },
-    {
-      "name": "New checklist…",
-      "type": "node-terminal",
-      "request": "launch",
-      "cwd": "${workspaceFolder}",
-      "command": "python3 build.py new \"${input:checklistName}\""
-    }
+    
   ],
-  "inputs": [
-    {
-      "id": "checklistName",
-      "type": "promptString",
-      "description": "Checklist name (e.g. Cessna 172)"
-    }
-  ]
 }

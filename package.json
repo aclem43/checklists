@@ -1,0 +1,34 @@
+{
+  "name": "checklist-editor",
+  "productName": "Checklist Editor",
+  "version": "0.1.0",
+  "description": "Edit plain-text aircraft checklists with a live print preview and export them to PDF.",
+  "author": "Alexi Clemeur",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "app/main.js",
+  "desktopName": "checklist-editor.desktop",
+  "scripts": {
+    "start": "node app/run.js",
+    "smoke": "node app/run.js --smoke-test",
+    "dist": "electron-builder",
+    "dist:linux": "electron-builder --linux AppImage",
+    "dist:win": "electron-builder --win nsis",
+    "dist:mac": "electron-builder --mac dmg",
+    "install:linux": "bash scripts/install-linux.sh",
+    "uninstall:linux": "bash scripts/install-linux.sh --uninstall"
+  },
+  "build": {
+    "appId": "com.aclemeur.checklist-editor",
+    "productName": "Checklist Editor",
+    "directories": { "output": "release", "buildResources": "build" },
+    "files": ["app/**", "lib/**", "build/icon.png", "colours.toml", "package.json"],
+    "linux": { "target": ["AppImage"], "category": "Utility", "syncDesktopName": true },
+    "win": { "target": ["nsis"] },
+    "mac": { "target": ["dmg"], "category": "public.app-category.productivity" }
+  },
+  "devDependencies": {
+    "electron": "44.9.3",
+    "electron-builder": "26.18.0"
+  }
+}

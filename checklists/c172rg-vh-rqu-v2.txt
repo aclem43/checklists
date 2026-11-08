@@ -2,7 +2,7 @@
 // Based on the school's laminated "Normal Check List C172RG" card (2 sides, A4, 2 columns each).
 // Lines marked "corrected" differ from the card to match POH Section 2 limitations / Section 4.
 @size A5
-
+@footer | v1
 === C172RG 2 Normal Checklist · VH-RQU
 
 # Before Starting Engine
@@ -29,6 +29,7 @@ Ignition Switch | START
 Oil Pressure | CHECK
 Avionics Power Switch | ON
 Radios | ON
+Mixture | Lean for Taxi
 ---
 # 3. After Start Checks
 ATIS | Checked
@@ -82,60 +83,44 @@ Parking Brake | OFF
 ---
 # Normal Takeoff
 Flaps | 0°
-Carburetor Heat | COLD
 Power | FULL THROTTLE & 2700 RPM
-Elevator Control | LIFT NOSE WHEEL at 55 KIAS
+Rotate | 55 KIAS
 Climb Speed | 70–80 KIAS
-Brakes | APPLY momentarily after takeoff
-Landing Gear | RETRACT and climb out
-Landing Light | ON
+Landing Gear | RETRACT 
+
 # Short Field Takeoff
 Flaps | 0°
-Carburetor Heat | COLD
-Brakes | APPLY
 Power | FULL THROTTLE & 2700 RPM
 Brakes | RELEASE
-Elevator | MAINTAIN SLIGHTLY TAIL LOW ATTITUDE
+Elevator | 
 // corrected: card says "63 KIAS after all obstacles are cleared"; POH 4-9 says until cleared
 Climb Speed | 63 KIAS until all obstacles cleared
-Brakes | APPLY momentarily after takeoff
 Landing Gear | RETRACT after all obstacles cleared
-Landing Light | ON
 
-# Approach
-Seats, Belts | ADJUST AND LOCK
-Magnetos | BOTH
-Mixture | SET FOR DA
-Fuel Selector Valve | BOTH
-Cowl Flaps | CLOSE
-Carburetor Heat | AS NEEDED
-Autopilot | OFF
-Landing Gear | DOWN & LOCK (below 140 KIAS)
-// corrected: card says "10° (140 IAS)"; VFE 10° is 130 KIAS (POH 2-4 and card's own V-speed table)
-Flaps | 10° (below 130 KIAS)
+# Bumfish
+Brakes | Check
+Undercarriage | Down & Green 
+Mixture | RICH
+Fuel | Both, Sufficient
+Instruments | Check
+Switches | As Required
+Hatches/Harness | Secure
+
+# Final Checks
+Pitch | Full Fine
+Undercarriage | Down & Green
+Flaps | Set
+Landing Clearance | Recieved or Expected
+Runway/Windsock | Check
 ===
-# Before Landing
-Propeller | FULL FINE
-// corrected: card says "40° (95 KIAS)"; 172RG flaps max 30°, VFE 10–30° is 100 KIAS (POH 2-4)
-Flaps | 30° (below 100 KIAS)
-Carburetor Heat | ON
-Landing Gear Light | GREEN
-Landing Light | ON
-#! Go Around
-Throttle / RPM | FULL / 2700 RPM
-Carburetor Heat | OFF
-Flaps | 20°
-Flaps | 0° (after 65 KIAS)
-Cowl Flaps | OPEN
-Gear | UP
 # After Landing
 Flaps | UP
 Carburetor Heat | OFF
 Cowl Flaps | OPEN
-Transponder | OFF
-Unnecessary Avionics | OFF
-Strobe Light | OFF
-Landing Light | OFF
+Transponder | STBY
+Mixture | Lean for Taxi
+Elevator Trim | Takeoff
+
 # Engine Shut Down
 Parking Brake | OFF
 Throttle | 1000 RPM
@@ -145,6 +130,8 @@ Avionics Power Switch | OFF
 Master Switch | OFF
 Control Wheel Lock | INSTALL
 Fuel Selector Valve | RIGHT
+
+---
 #! V Speeds (KIAS)
 Va  Manoeuvring 1202 / 1020 / 839 kg | 106 / 98 / 89
 Vfe  Max flap extension 10° | 130
@@ -158,3 +145,26 @@ Vs0  Stall, full flap | 42
 Vx  Best angle of climb | 67
 Vy  Best rate of climb | 84
 Vg  Max glide | 61–73
+
+=== C172RG Emergency Checklist
+#  LANDING GEAR FAILS TO EXTEND
+Master Switch | ON
+Landing Gear Lever | DOWN
+Landing Gear & Gear Pump Circuit Breakers | IN
+Emergency Hand Pump | EXTEND HANDLE, and PUMP (perpendicular to handle until resistance becomes heavy about 35 cycles)
+Gear Down Light | ON.
+Pump Handle | Stow.
+
+# Gear Up Landing
+Landing Gear Lever | UP
+Landing Gear & Gear Pump Circuit Breakers | IN
+Runway | SELECT longest hard surface & smooth runway available
+Wing Flaps | 30° (on final approach)
+Airspeed | 65 KIAS
+Doors |  Unlatch prior to touchdown
+Avionics & Master| OFF When landing is assured
+Touchdown | Slightly tail-low
+Mixture | Idle cut-off
+Ignition | Off
+Fuel Selector Valve | Off
+Airplane | EVACUATE

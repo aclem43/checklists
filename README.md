@@ -5,7 +5,8 @@ Plain-text checklists that build into printable HTML pages. Uses only Python 3, 
 ```
 checklists/   your checklists, one .txt file each   ← edit these
 colours.toml  colour settings for every checklist
-lib/          shared stylesheet and renderer (the look and layout)
+lib/          shared stylesheet, renderer, editor page and new-checklist template
+app/          Electron desktop app (see "Desktop app" below)
 dist/         generated HTML; open in a browser and print (don't edit)
 build.py      the build script
 ```
@@ -26,6 +27,30 @@ python3 build.py new "Cessna 172"   # create checklists/cessna-172.txt from a st
 - **Print / PDF** prints what's in the editor, including unsaved changes.
 
 Saving rebuilds `dist/`. If you edit the same file in VS Code instead, the editor picks up the change as long as it has no unsaved edits of its own.
+
+### Desktop app (Electron)
+
+The same editor as a desktop app, with Export PDF (at the exact A5/A4 page size, no print dialog), Export HTML, and a native menu. It needs Node.js.
+
+```sh
+npm install          # once
+npm start            # run the app
+npm run install:linux     # install for this user: app menu entry + `checklist-editor` command (no sudo)
+npm run uninstall:linux   # remove it again (your checklists are kept)
+npm run dist:linux   # build release/Checklist Editor-<version>.AppImage (needs libfuse2t64 to run)
+npm run dist:win     # Windows installer (best built on Windows)
+npm run dist:mac     # Mac .dmg (must be built on a Mac)
+npm run smoke        # headless check: load the editor, export a PDF, exit
+```
+
+Where it keeps checklists:
+- **Run from source:** this project's `checklists/` folder.
+- **Installed:** `~/Documents/Checklists/checklists/`.
+- **File → Open Folder…** switches to another folder. A `colours.toml` in that folder overrides the default colours.
+
+The app remembers the last folder you used.
+
+Code: `app/main.js` (window, menu, files, PDF export), `app/preload.js` (the API the editor page can use), `app/assemble.js` (builds the preview and standalone pages, mirroring `build.py`). The editor page, renderer and stylesheet in `lib/` are shared with the browser editor.
 
 **Printing:** open a page from `dist/` and click **Print / save as PDF**. Print at 100% scale with no margins; the page size is set for you. Each file in `dist/` is standalone, so you can send it to someone on its own.
 

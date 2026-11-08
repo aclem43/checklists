@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Checklist Editor app icon: a clipboard holding a checklist in the app's own style.
+       Source for build/icon.png (electron-builder makes the .ico/.icns from that). -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3d4bb0"/>
+      <stop offset="1" stop-color="#26307a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- tile (inset so it sits well beside other icons, macOS-style margin) -->
+  <rect x="80" y="80" width="864" height="864" rx="196" fill="url(#tile)"/>
+
+  <!-- sheet -->
+  <!-- plain shapes only (no SVG filters) so every icon renderer, e.g. KDE's, can draw it -->
+  <rect x="240" y="216" width="544" height="672" rx="44" fill="#0b1040" fill-opacity=".28"/>
+  <rect x="240" y="198" width="544" height="672" rx="44" fill="#ffffff"/>
+
+  <!-- clipboard clip -->
+  <rect x="392" y="150" width="240" height="104" rx="34" fill="#c8ccda"/>
+  <rect x="452" y="174" width="120" height="30" rx="15" fill="#9ea4b8"/>
+
+  <!-- red title bar -->
+  <rect x="294" y="292" width="436" height="80" rx="14" fill="#e4452f"/>
+
+  <!-- rows: item (grey) and action (blue) -->
+  <g>
+    <rect x="300" y="416" width="200" height="30" rx="15" fill="#c5c9d6"/>
+    <rect x="578" y="416" width="146" height="30" rx="15" fill="#1f3c9e"/>
+    <rect x="300" y="492" width="236" height="30" rx="15" fill="#c5c9d6"/>
+    <rect x="612" y="492" width="112" height="30" rx="15" fill="#1f3c9e"/>
+    <rect x="300" y="568" width="176" height="30" rx="15" fill="#c5c9d6"/>
+    <rect x="566" y="568" width="158" height="30" rx="15" fill="#1f3c9e"/>
+    <rect x="300" y="644" width="218" height="30" rx="15" fill="#c5c9d6"/>
+    <rect x="626" y="644" width="98" height="30" rx="15" fill="#1f3c9e"/>
+  </g>
+
+  <!-- yellow brief bar -->
+  <rect x="294" y="720" width="436" height="64" rx="14" fill="#f7e463"/>
+</svg>

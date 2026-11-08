@@ -1,0 +1,16 @@
+// Settings (optional): @size A5 | A4 | Letter (add -landscape), @font 8.5, @columns 2, @binding on|off,
+// @footer Left text | Right text   ({page} and {pages} become page numbers)
+@size A5
+@footer Version 1 | Page {page} of {pages}
+
+=== {name} Checklist
+# 1. Before Start
+Item | Action
+Another item | Check
+! A yellow brief bar
+---
+# 2. Next Section
+>! A red sub-label
+Item | Action
+!! BIG WARNING
+~ M | Mnemonic row
